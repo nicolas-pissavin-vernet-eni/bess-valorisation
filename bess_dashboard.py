@@ -468,6 +468,16 @@ if mode == "Arbitrage Day-Ahead":
               delta="Aucun" if jours_usure == 0 else f"{jours_usure/jours_total*100:.1f}%",
               delta_color="off" if jours_usure == 0 else "inverse")
 
+    # Config commune pour tous les graphiques — active toolbar complète
+    PLOTLY_CFG = dict(
+        scrollZoom=True,
+        displayModeBar=True,
+        modeBarButtonsToAdd=["drawrect", "eraseshape"],
+        modeBarButtonsToRemove=["lasso2d"],
+        displaylogo=False,
+        toImageButtonOptions=dict(format="png", width=1400, height=700, scale=2),
+    )
+
     # ── Graphique 1 : PnL annuel ─────────────────────────────────────────────
     st.markdown('<p class="section">PnL annuel — borne max vs réel</p>', unsafe_allow_html=True)
     fig1 = go.Figure()
@@ -475,51 +485,85 @@ if mode == "Arbitrage Day-Ahead":
         x=yearly["annee"].astype(str), y=yearly["pnl_libre_total"],
         name="Borne max", marker_color="#c8d8ec",
         text=yearly["pnl_libre_total"].apply(lambda x: f"{x:,.0f} €"),
-        textposition="outside"
+        textposition="outside",
+        hovertemplate="<b>%{x}</b><br>Borne max : %{y:,.0f} €<extra></extra>",
     ))
     fig1.add_trace(go.Bar(
         x=yearly["annee"].astype(str), y=yearly["pnl_total"],
         name="PnL réel", marker_color=BLUE,
         text=yearly["pnl_total"].apply(lambda x: f"{x:,.0f} €"),
-        textposition="inside", textfont_color="white"
+        textposition="inside", textfont_color="white",
+        hovertemplate="<b>%{x}</b><br>PnL réel : %{y:,.0f} €<extra></extra>",
     ))
     fig1.update_layout(
-        barmode="group", height=340,
+        barmode="group", height=380,
         yaxis=dict(title="PnL (€)", tickformat=",", gridcolor="#f0f0f0"),
         xaxis_title="Année",
         legend=dict(orientation="h", y=1.08, x=0),
         margin=dict(t=10, b=40, l=60, r=20),
         plot_bgcolor="white", paper_bgcolor="white",
+        hoverlabel=dict(bgcolor="white", font_size=13),
     )
-    st.plotly_chart(fig1, width="stretch")
+    st.plotly_chart(fig1, width="stretch", config=PLOTLY_CFG)
 
     # ── Graphiques 2×2 ───────────────────────────────────────────────────────
     col_a, col_b = st.columns(2)
 
     with col_a:
-        st.markdown('<p class="section">Spread moyen mensuel (€/MWh)</p>', unsafe_allow_html=True)
-        monthly = (daily[daily["valid"]]
-                   .groupby(["annee", "mois"])["spread"].mean().reset_index())
-        monthly["label"] = (monthly["annee"].astype(str) + "-"
-                            + monthly["mois"].astype(str).str.zfill(2))
+        # Spread HEBDOMADAIRE (plus de points) + tendance
+        st.markdown('<p class="section">Spread moyen — par semaine (€/MWh)</p>',
+                    unsafe_allow_html=True)
+        d_valid = daily[daily["valid"]].copy()
+        d_valid["semaine"] = pd.to_datetime(d_valid["date"]).dt.to_period("W").apply(
+            lambda r: r.start_time)
+        weekly = d_valid.groupby(["annee", "semaine"])["spread"].agg(
+            ["mean", "min", "max", "count"]).reset_index()
+        weekly.columns = ["annee", "semaine", "spread_moy", "spread_min",
+                           "spread_max", "nb_jours"]
+
         fig2 = go.Figure()
-        for i, yr in enumerate(sorted(monthly["annee"].unique())):
-            d = monthly[monthly["annee"] == yr]
+        for i, yr in enumerate(sorted(weekly["annee"].unique())):
+            w = weekly[weekly["annee"] == yr].sort_values("semaine")
+            # Bande min-max
             fig2.add_trace(go.Scatter(
-                x=d["label"], y=d["spread"], mode="lines+markers",
-                name=str(int(yr)), line=dict(width=2, color=COLORS[i]),
-                marker=dict(size=5)
+                x=pd.concat([w["semaine"], w["semaine"].iloc[::-1]]),
+                y=pd.concat([w["spread_max"], w["spread_min"].iloc[::-1]]),
+                fill="toself",
+                fillcolor=f"rgba({int(COLORS[i % len(COLORS)][1:3], 16)},"
+                          f"{int(COLORS[i % len(COLORS)][3:5], 16)},"
+                          f"{int(COLORS[i % len(COLORS)][5:7], 16)},0.1)",
+                line=dict(color="rgba(0,0,0,0)"),
+                showlegend=False, hoverinfo="skip",
+            ))
+            # Courbe moyenne
+            fig2.add_trace(go.Scatter(
+                x=w["semaine"], y=w["spread_moy"],
+                mode="lines+markers", name=str(int(yr)),
+                line=dict(width=2, color=COLORS[i % len(COLORS)]),
+                marker=dict(size=4),
+                hovertemplate=(
+                    "<b>Semaine du %{x|%d/%m/%Y}</b><br>"
+                    f"Année {int(yr)}<br>"
+                    "Spread moy : <b>%{y:.1f} €/MWh</b><br>"
+                    "Min : %{customdata[0]:.1f} | Max : %{customdata[1]:.1f}<br>"
+                    "Jours actifs : %{customdata[2]}<extra></extra>"
+                ),
+                customdata=w[["spread_min", "spread_max", "nb_jours"]].values,
             ))
         fig2.update_layout(
-            height=280, margin=dict(t=10, b=40, l=60, r=10),
+            height=320, margin=dict(t=10, b=40, l=60, r=10),
             yaxis=dict(title="Spread (€/MWh)", gridcolor="#f0f0f0"),
-            xaxis_title="", plot_bgcolor="white", paper_bgcolor="white",
-            legend=dict(orientation="h", y=1.1)
+            xaxis=dict(title="", tickformat="%b %Y", nticks=12),
+            plot_bgcolor="white", paper_bgcolor="white",
+            legend=dict(orientation="h", y=1.1),
+            hoverlabel=dict(bgcolor="white", font_size=12),
+            hovermode="x unified",
         )
-        st.plotly_chart(fig2, width="stretch")
+        st.plotly_chart(fig2, width="stretch", config=PLOTLY_CFG)
 
     with col_b:
-        st.markdown('<p class="section">Profil horaire charge / décharge</p>', unsafe_allow_html=True)
+        st.markdown('<p class="section">Profil horaire charge / décharge</p>',
+                    unsafe_allow_html=True)
         h_ch  = {h: 0 for h in range(24)}
         h_dch = {h: 0 for h in range(24)}
         for hc_list, hd_list in zip(daily.loc[daily["valid"], "h_charge"],
@@ -527,61 +571,103 @@ if mode == "Arbitrage Day-Ahead":
             for h in hc_list:  h_ch[h]  += 1
             for h in hd_list:  h_dch[h] += 1
         fig3 = go.Figure()
-        fig3.add_trace(go.Bar(x=list(range(24)), y=list(h_ch.values()),
-                              name="Charge (achat)",   marker_color=LBLUE))
-        fig3.add_trace(go.Bar(x=list(range(24)), y=list(h_dch.values()),
-                              name="Décharge (vente)", marker_color=ORANGE))
+        fig3.add_trace(go.Bar(
+            x=list(range(24)), y=list(h_ch.values()),
+            name="Charge (achat)", marker_color=LBLUE,
+            hovertemplate="H%{x:02d} — Charge : <b>%{y} jours</b>"
+                          " (%{customdata:.1f}%)<extra></extra>",
+            customdata=[v / jours_actifs * 100 for v in h_ch.values()],
+        ))
+        fig3.add_trace(go.Bar(
+            x=list(range(24)), y=list(h_dch.values()),
+            name="Décharge (vente)", marker_color=ORANGE,
+            hovertemplate="H%{x:02d} — Décharge : <b>%{y} jours</b>"
+                          " (%{customdata:.1f}%)<extra></extra>",
+            customdata=[v / jours_actifs * 100 for v in h_dch.values()],
+        ))
         fig3.update_layout(
-            height=280, barmode="group", margin=dict(t=10, b=40, l=60, r=10),
-            xaxis=dict(title="Heure", tickmode="linear", dtick=2),
+            height=320, barmode="group", margin=dict(t=10, b=40, l=60, r=10),
+            xaxis=dict(title="Heure", tickmode="linear", dtick=1,
+                       ticktext=[f"H{h:02d}" for h in range(24)],
+                       tickvals=list(range(24))),
             yaxis=dict(title="Nb jours", gridcolor="#f0f0f0"),
             plot_bgcolor="white", paper_bgcolor="white",
-            legend=dict(orientation="h", y=1.1)
+            legend=dict(orientation="h", y=1.1),
+            hoverlabel=dict(bgcolor="white", font_size=12),
         )
-        st.plotly_chart(fig3, width="stretch")
+        st.plotly_chart(fig3, width="stretch", config=PLOTLY_CFG)
 
     col_c, col_d = st.columns(2)
 
     with col_c:
-        st.markdown('<p class="section">Distribution des spreads journaliers</p>', unsafe_allow_html=True)
+        st.markdown('<p class="section">Distribution des spreads journaliers</p>',
+                    unsafe_allow_html=True)
         sv = daily.loc[daily["valid"], "spread"]
         fig4 = go.Figure()
-        fig4.add_trace(go.Histogram(x=sv, nbinsx=40,
-                                    marker_color=BLUE, opacity=0.8))
-        fig4.add_vline(x=sv.mean(), line_dash="dash", line_color=ORANGE,
-                       annotation_text=f"Moy: {sv.mean():.1f} €/MWh",
-                       annotation_position="top right")
-        fig4.update_layout(
-            height=280, margin=dict(t=10, b=40, l=60, r=10),
-            xaxis_title="Spread (€/MWh)",
-            yaxis=dict(title="Nb jours", gridcolor="#f0f0f0"),
-            plot_bgcolor="white", paper_bgcolor="white", showlegend=False
+        fig4.add_trace(go.Histogram(
+            x=sv, nbinsx=50, marker_color=BLUE, opacity=0.8,
+            hovertemplate="Spread : %{x:.0f}–%{x:.0f} €/MWh<br>"
+                          "Nb jours : <b>%{y}</b><extra></extra>",
+        ))
+        fig4.add_vline(
+            x=sv.mean(), line_dash="dash", line_color=ORANGE, line_width=2,
+            annotation_text=f"Moy: {sv.mean():.1f} €/MWh",
+            annotation_position="top right",
+            annotation_font=dict(size=12, color=ORANGE),
         )
-        st.plotly_chart(fig4, width="stretch")
+        fig4.add_vline(
+            x=sv.median(), line_dash="dot", line_color=GREEN, line_width=1.5,
+            annotation_text=f"Méd: {sv.median():.1f}",
+            annotation_position="top left",
+            annotation_font=dict(size=11, color=GREEN),
+        )
+        fig4.update_layout(
+            height=320, margin=dict(t=10, b=40, l=60, r=10),
+            xaxis=dict(title="Spread (€/MWh)", gridcolor="#f0f0f0"),
+            yaxis=dict(title="Nb jours", gridcolor="#f0f0f0"),
+            plot_bgcolor="white", paper_bgcolor="white", showlegend=False,
+            hoverlabel=dict(bgcolor="white", font_size=12),
+        )
+        st.plotly_chart(fig4, width="stretch", config=PLOTLY_CFG)
 
     with col_d:
-        st.markdown('<p class="section">PnL cumulé dans le temps</p>', unsafe_allow_html=True)
-        ds = daily.sort_values("date")
+        st.markdown('<p class="section">PnL cumulé dans le temps</p>',
+                    unsafe_allow_html=True)
+        ds = daily.sort_values("date").copy()
+        ds["pnl_cum"]       = ds["pnl"].cumsum()
+        ds["pnl_libre_cum"] = ds["pnl_libre"].cumsum()
         fig5 = go.Figure()
         fig5.add_trace(go.Scatter(
-            x=ds["date"], y=ds["pnl"].cumsum(),
+            x=ds["date"], y=ds["pnl_cum"],
             fill="tozeroy", mode="lines", name="PnL cumulé",
             line=dict(color=BLUE, width=2),
-            fillcolor="rgba(26,58,92,0.12)"
+            fillcolor="rgba(26,58,92,0.12)",
+            hovertemplate=(
+                "<b>%{x|%d/%m/%Y}</b><br>"
+                "PnL cumulé : <b>%{y:,.0f} €</b><br>"
+                "PnL du jour : %{customdata:,.0f} €<extra></extra>"
+            ),
+            customdata=ds["pnl"].values,
         ))
         fig5.add_trace(go.Scatter(
-            x=ds["date"], y=ds["pnl_libre"].cumsum(),
+            x=ds["date"], y=ds["pnl_libre_cum"],
             mode="lines", name="Borne max",
-            line=dict(color="#b0c8e0", width=1.5, dash="dot")
+            line=dict(color="#b0c8e0", width=1.5, dash="dot"),
+            hovertemplate=(
+                "<b>%{x|%d/%m/%Y}</b><br>"
+                "Borne max cumulée : %{y:,.0f} €<extra></extra>"
+            ),
         ))
         fig5.update_layout(
-            height=280, margin=dict(t=10, b=40, l=60, r=10),
+            height=320, margin=dict(t=10, b=40, l=60, r=10),
             yaxis=dict(title="PnL cumulé (€)", tickformat=",", gridcolor="#f0f0f0"),
-            xaxis_title="",
+            xaxis=dict(title="", tickformat="%b %Y"),
             plot_bgcolor="white", paper_bgcolor="white",
-            legend=dict(orientation="h", y=1.1)
+            legend=dict(orientation="h", y=1.1),
+            hoverlabel=dict(bgcolor="white", font_size=12),
+            hovermode="x unified",
         )
-        st.plotly_chart(fig5, width="stretch")
+        st.plotly_chart(fig5, width="stretch", config=PLOTLY_CFG)
 
     # ── Tableau récap ────────────────────────────────────────────────────────
     st.markdown('<p class="section">Récapitulatif annuel</p>', unsafe_allow_html=True)
@@ -611,27 +697,42 @@ if mode == "Arbitrage Day-Ahead":
                 st.metric("Trade valide", "Oui" if r["valid"] else "Non")
             with ca:
                 fig_d = go.Figure()
-                fig_d.add_trace(go.Bar(x=list(range(24)), y=prix_j.tolist(),
-                                       marker_color="#c8d8ec", name="Prix spot"))
+                fig_d.add_trace(go.Bar(
+                    x=list(range(24)), y=prix_j.tolist(),
+                    marker_color="#c8d8ec", name="Prix spot",
+                    hovertemplate="H%{x:02d} — Prix : <b>%{y:.2f} €/MWh</b><extra></extra>",
+                ))
                 if r["valid"]:
                     fig_d.add_trace(go.Scatter(
                         x=r["h_charge"], y=prix_j[r["h_charge"]],
                         mode="markers", name=f"Charge ({duration_h}h)",
-                        marker=dict(color=LBLUE, size=12, symbol="triangle-up")
+                        marker=dict(color=LBLUE, size=14, symbol="triangle-up"),
+                        hovertemplate="H%{x:02d} — Charge : <b>%{y:.2f} €/MWh</b><extra></extra>",
                     ))
                     fig_d.add_trace(go.Scatter(
                         x=r["h_decharge"], y=prix_j[r["h_decharge"]],
                         mode="markers", name=f"Décharge ({duration_h}h)",
-                        marker=dict(color=ORANGE, size=12, symbol="triangle-down")
+                        marker=dict(color=ORANGE, size=14, symbol="triangle-down"),
+                        hovertemplate="H%{x:02d} — Décharge : <b>%{y:.2f} €/MWh</b><extra></extra>",
                     ))
+                    # Ligne spread
+                    fig_d.add_hline(y=r["prix_charge"], line_dash="dot",
+                                    line_color=LBLUE, line_width=1,
+                                    annotation_text=f"Achat moy: {r['prix_charge']:.1f}€")
+                    fig_d.add_hline(y=r["prix_decharge"], line_dash="dot",
+                                    line_color=ORANGE, line_width=1,
+                                    annotation_text=f"Vente moy: {r['prix_decharge']:.1f}€")
                 fig_d.update_layout(
-                    height=300, margin=dict(t=10, b=40, l=60, r=10),
-                    xaxis=dict(title="Heure", tickmode="linear", dtick=2),
+                    height=360, margin=dict(t=10, b=40, l=60, r=10),
+                    xaxis=dict(title="Heure", tickmode="linear", dtick=1,
+                               ticktext=[f"H{h:02d}" for h in range(24)],
+                               tickvals=list(range(24))),
                     yaxis=dict(title="Prix (€/MWh)", gridcolor="#f0f0f0"),
                     plot_bgcolor="white", paper_bgcolor="white",
-                    legend=dict(orientation="h", y=1.1)
+                    legend=dict(orientation="h", y=1.1),
+                    hoverlabel=dict(bgcolor="white", font_size=12),
                 )
-                st.plotly_chart(fig_d, width="stretch")
+                st.plotly_chart(fig_d, width="stretch", config=PLOTLY_CFG)
 
     # ── Export PDF ───────────────────────────────────────────────────────────
     st.markdown("---")
@@ -759,13 +860,15 @@ else:
     fig_l.add_trace(go.Scatter(
         x=list(range(24)), y=profil_arr.tolist(),
         mode="lines+markers", name="Avant lissage",
-        line=dict(color=ORANGE, width=2.5, dash="dot"), marker=dict(size=5)
+        line=dict(color=ORANGE, width=2.5, dash="dot"), marker=dict(size=6),
+        hovertemplate="H%{x:02d} — Avant : <b>%{y:.3f} MW</b><extra></extra>",
     ), row=1, col=1)
     fig_l.add_trace(go.Scatter(
         x=list(range(24)), y=jour["profil_lisse"].tolist(),
         mode="lines+markers", name="Après lissage",
         line=dict(color=BLUE, width=2.5),
-        fill="tozeroy", fillcolor="rgba(26,58,92,0.07)", marker=dict(size=5)
+        fill="tozeroy", fillcolor="rgba(26,58,92,0.07)", marker=dict(size=6),
+        hovertemplate="H%{x:02d} — Après : <b>%{y:.3f} MW</b><extra></extra>",
     ), row=1, col=1)
     fig_l.add_hline(y=res["seuil_MW"], line_dash="dash", line_color=GREEN,
                     line_width=2, annotation_text=f"Seuil {res['seuil_MW']:.2f} MW",
@@ -773,18 +876,25 @@ else:
     colors_bar = [LBLUE if v >= 0 else ORANGE for v in actions_bess]
     fig_l.add_trace(go.Bar(
         x=list(range(24)), y=actions_bess,
-        marker_color=colors_bar, name="BESS"
+        marker_color=colors_bar, name="BESS",
+        hovertemplate="H%{x:02d} — BESS : <b>%{y:.3f} MW</b>"
+                      " (%{customdata})<extra></extra>",
+        customdata=[a for a, v in jour["actions"]],
     ), row=2, col=1)
     fig_l.add_hline(y=0, line_color="#333", line_width=0.5, row=2, col=1)
     fig_l.update_layout(
-        height=500, margin=dict(t=40, b=40, l=60, r=20),
+        height=520, margin=dict(t=40, b=40, l=60, r=20),
         plot_bgcolor="white", paper_bgcolor="white",
         legend=dict(orientation="h", y=1.04),
-        xaxis2=dict(tickmode="linear", dtick=2, title="Heure"),
-        yaxis2=dict(title="MW", gridcolor="#f0f0f0"),
+        xaxis2=dict(tickmode="linear", dtick=1, title="Heure",
+                    ticktext=[f"H{h:02d}" for h in range(24)],
+                    tickvals=list(range(24))),
+        yaxis2=dict(title="MW BESS", gridcolor="#f0f0f0"),
         yaxis=dict(gridcolor="#f0f0f0"),
+        hoverlabel=dict(bgcolor="white", font_size=12),
+        hovermode="x unified",
     )
-    st.plotly_chart(fig_l, width="stretch")
+    st.plotly_chart(fig_l, width="stretch", config=PLOTLY_CFG)
 
     # ── SOC + Projection économique ──────────────────────────────────────────
     col_s1, col_s2 = st.columns(2)
@@ -795,21 +905,25 @@ else:
         fig_soc = go.Figure()
         fig_soc.add_trace(go.Scatter(
             x=list(range(25)), y=jour["soc_hist"],
-            mode="lines+markers", line=dict(color=LBLUE, width=2),
-            fill="tozeroy", fillcolor="rgba(46,117,182,0.12)"
+            mode="lines+markers", name="SOC",
+            line=dict(color=LBLUE, width=2),
+            fill="tozeroy", fillcolor="rgba(46,117,182,0.12)",
+            marker=dict(size=6),
+            hovertemplate="Après H%{x:02d} — SOC : <b>%{y:.3f} MWh</b><extra></extra>",
         ))
         fig_soc.add_hline(y=energy_MWh * 0.9, line_dash="dash",
-                          line_color=GREEN, annotation_text="SOC max (90%)")
+                          line_color=GREEN, annotation_text=f"SOC max ({energy_MWh*0.9:.1f} MWh)")
         fig_soc.add_hline(y=energy_MWh * 0.1, line_dash="dash",
-                          line_color=ORANGE, annotation_text="SOC min (10%)")
+                          line_color=ORANGE, annotation_text=f"SOC min ({energy_MWh*0.1:.1f} MWh)")
         fig_soc.update_layout(
-            height=280, margin=dict(t=10, b=40, l=60, r=20),
+            height=300, margin=dict(t=10, b=40, l=60, r=20),
             xaxis=dict(title="Heure", tickmode="linear", dtick=2),
             yaxis=dict(title="SOC (MWh)", gridcolor="#f0f0f0",
                        range=[0, energy_MWh * 1.1]),
-            plot_bgcolor="white", paper_bgcolor="white", showlegend=False
+            plot_bgcolor="white", paper_bgcolor="white", showlegend=False,
+            hoverlabel=dict(bgcolor="white", font_size=12),
         )
-        st.plotly_chart(fig_soc, width="stretch")
+        st.plotly_chart(fig_soc, width="stretch", config=PLOTLY_CFG)
 
     with col_s2:
         st.markdown('<p class="section">Projection économique annuelle</p>',
@@ -820,15 +934,17 @@ else:
             x=yl["annee"].astype(str), y=yl["economie_an"],
             marker_color=BLUE,
             text=yl["economie_an"].apply(lambda x: f"{x:,.0f} €"),
-            textposition="outside"
+            textposition="outside",
+            hovertemplate="<b>%{x}</b><br>Économie : <b>%{y:,.0f} €</b><extra></extra>",
         ))
         fig_eco.update_layout(
-            height=280, margin=dict(t=10, b=40, l=60, r=20),
+            height=300, margin=dict(t=10, b=40, l=60, r=20),
             xaxis_title="Année",
             yaxis=dict(title="Économie (€)", tickformat=",", gridcolor="#f0f0f0"),
-            plot_bgcolor="white", paper_bgcolor="white", showlegend=False
+            plot_bgcolor="white", paper_bgcolor="white", showlegend=False,
+            hoverlabel=dict(bgcolor="white", font_size=12),
         )
-        st.plotly_chart(fig_eco, width="stretch")
+        st.plotly_chart(fig_eco, width="stretch", config=PLOTLY_CFG)
 
     # ── Détail heure par heure ───────────────────────────────────────────────
     with st.expander("Détail heure par heure"):
