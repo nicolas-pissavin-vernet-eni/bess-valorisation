@@ -23,8 +23,8 @@ Développé dans le cadre d'un projet de fin d'études chez ENI Gas & Power.
 - Excel `.xlsx` avec une feuille `Spot_input`, colonnes : `ANNEE`, `MOIS`, `JOUR`, `HEURE`, `Prix Final`
 
 **Intraday**
-- ZIP EPEX `Continuous_Index-FR-*.zip` pour le marché continu (IDFULL / ID1 / ID3)
-- CSV `pan-european_prices_france_IDA1_*.csv` et `IDA3_*.csv` pour les enchères
+- ZIP `Intraday Continuous.zip` (export EPEX complet) pour le marché continu (IDFULL / ID1 / ID3) - si le fichier est trop volumineux, il peut être splitté en plusieurs parts (`Intraday_part1.zip`, `Intraday_part2.zip`...)
+- CSV `pan-european_prices_france_IDA1_*.csv` et `IDA3_*.csv` pour les enchères (optionnel)
 - IDA2 est rarement présent dans les exports EPEX (marché peu liquide) - l'outil fonctionne sans
 
 **Imbalance Market**
