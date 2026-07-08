@@ -1518,8 +1518,14 @@ if True:
                                     "Créez-en une sur aistudio.google.com/apikey (gratuit) "
                                     "et ajoutez GEMINI_API_KEY dans .streamlit/secrets.toml"
                                 )
-                            from google import genai as _genai_sdk
-                            from google.genai import types as _genai_types
+                            try:
+                                from google import genai as _genai_sdk
+                                from google.genai import types as _genai_types
+                            except ImportError:
+                                raise Exception(
+                                    "Package google-genai non installé sur cet environnement. "
+                                    "Pour activer l'assistant IA en local : pip install google-genai"
+                                )
                             import time as _time
 
                             _client = _genai_sdk.Client(api_key=_GEMINI_KEY)
