@@ -1,13 +1,13 @@
-"""
+﻿"""
 ================================================================================
-BESS VALORISATION — Dashboard Streamlit
+BESS VALORISATION  -  Dashboard Streamlit
 ================================================================================
 Déploiement public : streamlit run bess_dashboard.py
 Streamlit Cloud   : pointer vers ce fichier sur GitHub
 
 Modes :
-  1. Arbitrage DA  — achat heures creuses / vente heures de pointe
-  2. Lissage       — écrêtage des pics de consommation client
+  1. Arbitrage DA   -  achat heures creuses / vente heures de pointe
+  2. Lissage        -  écrêtage des pics de consommation client
 ================================================================================
 """
 
@@ -167,7 +167,7 @@ def _build_global_diag_html():
 
     return f"""<!DOCTYPE html>
 <html><head><meta charset="utf-8">
-<title>BESS — Rapport de vérification complet</title>
+<title>BESS  -  Rapport de vérification complet</title>
 <style>
 body {{ font-family: Arial, Helvetica, sans-serif; max-width: 1300px; margin: 24px auto; color: #222; }}
 th, td {{ border: 1px solid #d0dff0; padding: 4px 10px; text-align: right; }}
@@ -175,9 +175,9 @@ th {{ background: #1a3a5c; color: white; }}
 td:first-child, th:first-child {{ text-align: left; }}
 tr:nth-child(even) td {{ background: #f7fafd; }}
 </style></head><body>
-<h1 style="color:#1a3a5c;">BESS Valorisation — Rapport de vérification complet</h1>
-<p style="color:#6b7a8d;">Généré le {_dtd_g.datetime.now().strftime('%d/%m/%Y %H:%M')} — fichier {st.session_state.get('excel_name','N/A')}
-— modèle {st.session_state.get('modele_choix','N/A')}</p>
+<h1 style="color:#1a3a5c;">BESS Valorisation  -  Rapport de vérification complet</h1>
+<p style="color:#6b7a8d;">Généré le {_dtd_g.datetime.now().strftime('%d/%m/%Y %H:%M')}  -  fichier {st.session_state.get('excel_name','N/A')}
+ -  modèle {st.session_state.get('modele_choix','N/A')}</p>
 <p style="color:#6b7a8d;font-size:0.85rem;">Seuls les onglets ouverts/calculés pendant cette session apparaissent avec leur contenu (KPI, tableaux, graphiques interactifs identiques au dashboard).</p>
 {sections_html}
 </body></html>"""
@@ -269,7 +269,7 @@ def _plot_cycles_distribution(daily_df, periode_label):
 # PAGE CONFIG
 # ──────────────────────────────────────────────────────────────────────────────
 
-# ── Session state — thème et fichier ─────────────────────────────────────────
+# ── Session state  -  thème et fichier ─────────────────────────────────────────
 if "theme" not in st.session_state:
     st.session_state.theme = "light"
 if "bloomberg" not in st.session_state:
@@ -283,7 +283,7 @@ if "excel_name" not in st.session_state:
     st.session_state.excel_name = None
 
 st.set_page_config(
-    page_title="BESS Valorisation DA — Plénitude",
+    page_title="BESS Valorisation DA  -  Plénitude",
     page_icon="⚡",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -291,7 +291,7 @@ st.set_page_config(
 st.markdown(f"""
 <style>
 /* ═══════════════════════════════════════════════════
-   LOGO ENI — fixe en haut à droite
+   LOGO ENI  -  fixe en haut à droite
    ═══════════════════════════════════════════════════ */
 .eni-toolbar {{
   position: fixed; top: 4px; right: 8px; height: 40px;
@@ -595,7 +595,7 @@ small, .stCaption, [data-testid="stCaptionContainer"] {
 </style>
 """, unsafe_allow_html=True)
 
-# Logo ENI — dans la toolbar en haut à droite
+# Logo ENI  -  dans la toolbar en haut à droite
 st.markdown(
     f'<div class="eni-toolbar">'
     f'<img src="data:image/png;base64,{ENI_LOGO_B64}" alt="ENI"/>'
@@ -769,7 +769,7 @@ def build_pdf_arbitrage(params_txt, kpis, yearly_df, daily_df,
     story = []
 
     # ── En-tête ───────────────────────────────────────────────────────────────
-    story.append(Paragraph("BESS Valorisation — Marché Day-Ahead", S["title"]))
+    story.append(Paragraph("BESS Valorisation  -  Marché Day-Ahead", S["title"]))
     story.append(Paragraph(
         f"Rapport Arbitrage Day-Ahead | Généré le {date_str}", S["sub"]))
     story.append(Spacer(1, 0.2*cm))
@@ -808,7 +808,7 @@ def build_pdf_arbitrage(params_txt, kpis, yearly_df, daily_df,
     story.append(Spacer(1, 0.4*cm))
 
     # ── Profil horaire charge/décharge ────────────────────────────────────────
-    story.append(Paragraph("4. Profil horaire — fréquence charge / décharge", S["h2"]))
+    story.append(Paragraph("4. Profil horaire  -  fréquence charge / décharge", S["h2"]))
     story.append(Paragraph(
         "Nombre de jours où chaque heure a été utilisée pour charger ou décharger.",
         S["body"]))
@@ -855,7 +855,7 @@ def build_pdf_arbitrage(params_txt, kpis, yearly_df, daily_df,
 
     # ── Pied de page ─────────────────────────────────────────────────────────
     story.append(Paragraph(
-        "Plénitude B-Charge — BESS Valorisation v2.0 — Document confidentiel",
+        "Plénitude B-Charge  -  BESS Valorisation v2.0  -  Document confidentiel",
         S["foot"]))
 
     doc.build(story)
@@ -891,7 +891,7 @@ def build_pdf_lissage(params_txt, kpis, detail_df, yearly_df, date_str):
     }
     story = []
 
-    story.append(Paragraph("BESS Valorisation — Lissage de charge", S["title"]))
+    story.append(Paragraph("BESS Valorisation  -  Lissage de charge", S["title"]))
     story.append(Paragraph(f"Rapport Lissage | Généré le {date_str}", S["sub"]))
     story.append(Spacer(1, 0.2*cm))
 
@@ -937,7 +937,7 @@ def build_pdf_lissage(params_txt, kpis, detail_df, yearly_df, date_str):
     story.append(Spacer(1, 0.5*cm))
 
     story.append(Paragraph(
-        "Plénitude B-Charge — BESS Valorisation v2.0 — Document confidentiel",
+        "Plénitude B-Charge  -  BESS Valorisation v2.0  -  Document confidentiel",
         S["foot"]))
     doc.build(story)
     buf.seek(0)
@@ -1083,32 +1083,32 @@ with st.sidebar:
     # ── Paramètres batterie ───────────────────────────────────────────────────
     st.markdown("### Modèle de batterie")
 
-    # 3 modèles issus du fichier Excel (feuille BESS) — puissances seulement
+    # 3 modèles issus du fichier Excel (feuille BESS)  -  puissances seulement
     # Les restrictions horaires sont configurées séparément dans l'onglet Arbitrage
     # Définition complète des 3 modèles (puissance + restrictions par défaut)
     _MODELES = {
-        "Modèle 1 — 430 kW": {
+        "Modèle 1  -  430 kW": {
             "power_MW": 0.430,
             "jours":    ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"],
             "h_debut":  10,
             "h_fin":    12,
             "desc":     "430 kW · Restriction Lun–Sam H10–H12",
         },
-        "Modèle 2 — 215 kW": {
+        "Modèle 2  -  215 kW": {
             "power_MW": 0.215,
             "jours":    ["Mardi", "Mercredi", "Jeudi"],
             "h_debut":  10,
             "h_fin":    14,
             "desc":     "215 kW · Restriction Mar–Jeu H10–H14",
         },
-        "Modèle 3 — 215 kW": {
+        "Modèle 3  -  215 kW": {
             "power_MW": 0.215,
             "jours":    [],
             "h_debut":  0,
             "h_fin":    0,
             "desc":     "215 kW · Aucune restriction",
         },
-        "Modèle 4 — 1 MW": {
+        "Modèle 4  -  1 MW": {
             "power_MW": 1.0,
             "jours":    [],
             "h_debut":  0,
@@ -1124,7 +1124,7 @@ with st.sidebar:
         },
     }
 
-    _default_model = "Modèle 4 — 1 MW"
+    _default_model = "Modèle 4  -  1 MW"
     # Forcer reset si le modèle en session n'existe plus (ex. ancienne version)
     if ("modele_choix" not in st.session_state
             or st.session_state["modele_choix"] not in _MODELES):
@@ -1247,7 +1247,7 @@ except Exception as e:
     st.stop()
 
 # En-tête principal
-st.markdown('<p class="main-title">BESS Valorisation — Marché Day-Ahead</p>',
+st.markdown('<p class="main-title">BESS Valorisation  -  Marché Day-Ahead</p>',
             unsafe_allow_html=True)
 st.markdown(
     f'<p class="sub-title">Fichier : {uploaded.name} &nbsp;|&nbsp; '
@@ -1258,12 +1258,12 @@ st.markdown(
 )
 
 # ══════════════════════════════════════════════════════════════════════════════
-# ASSISTANT IA — bulle flottante en bas à droite
+# ASSISTANT IA  -  bulle flottante en bas à droite
 # ══════════════════════════════════════════════════════════════════════════════
 # Position fixe via CSS sur la classe générée par container(key=...). Pas de
 # st.fragment ici : retesté le 2026-06-23 sur Streamlit 1.56 (serveur relancé
 # à froid, test patient, sans aucune charge concurrente) avec tout le panneau
-# dans un @st.fragment + st.rerun(scope="fragment") — le bouton toggle (ouvrir/
+# dans un @st.fragment + st.rerun(scope="fragment")  -  le bouton toggle (ouvrir/
 # fermer) ne répond plus du tout après le premier clic, de façon reproductible.
 # Donc rerun complet du script à chaque message, mitigé par le cache déjà en place.
 
@@ -1340,7 +1340,7 @@ def _ai_build_context():
                 _mname, _y["pnl_total"].sum(), _y["spread_moy"].mean()))
 
     if len(lines) <= 2:
-        lines.append("Aucune simulation calculee pour l'instant — lancez d'abord une simulation.")
+        lines.append("Aucune simulation calculee pour l'instant  -  lancez d'abord une simulation.")
     return "\n".join(lines)
 
 
@@ -1354,7 +1354,7 @@ def _ai_get_key():
 
 # Condense le contenu de l'onglet Méthodologie (tab_methodo, vérifié à jour vs
 # bess_engine.py) pour que l'IA connaisse la mécanique réelle des calculs,
-# pas seulement les chiffres produits — sinon elle ne fait que deviner avec
+# pas seulement les chiffres produits  -  sinon elle ne fait que deviner avec
 # des connaissances génériques de marché électrique.
 _AI_METHODO_DOC = """
 === METHODOLOGIE DE L'OUTIL (reference fixe, ne pas reciter sauf si demande) ===
@@ -1447,18 +1447,26 @@ st.markdown(f"""
     overflow-y: auto !important;
 }}
 .st-key-ai_fab_panel p, .st-key-ai_fab_panel div {{ color: {_panel_text} !important; }}
+.st-key-ai_fab_panel button, .st-key-ai_fab_panel button p, .st-key-ai_fab_panel button div {{ color: white !important; }}
+.st-key-ai_fab_close button {{
+    background: {_btn_bg} !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 6px !important;
+}}
+.st-key-ai_fab_close button p, .st-key-ai_fab_close button div, .st-key-ai_fab_close p {{ color: white !important; }}
 </style>
 """, unsafe_allow_html=True)
 
 # Toujours rendu (structure DOM stable entre les reruns) ; la visibilité est
-# pilotée par CSS (_panel_disp) — sinon Streamlit confond les conteneurs
+# pilotée par CSS (_panel_disp)  -  sinon Streamlit confond les conteneurs
 # ai_fab_panel/ai_fab_btn quand l'un apparaît/disparaît entre deux reruns
 # (bug constaté : le bouton héritait de la hauteur du panneau fermé).
 if True:
     with st.container(key="ai_fab_panel"):
         _ai_col_title, _ai_col_close = st.columns([5, 1])
         with _ai_col_title:
-            st.markdown("**🤖 Assistant IA — BESS**")
+            st.markdown("**🤖 Assistant IA  -  BESS**")
         with _ai_col_close:
             if st.button("✕", key="ai_fab_close"):
                 st.session_state["_ai_chat_open"] = False
@@ -1567,12 +1575,31 @@ if True:
                                     break
                                 except Exception as _e:
                                     _err_str = str(_e)
-                                    if "429" in _err_str or "quota" in _err_str.lower() or "RESOURCE_EXHAUSTED" in _err_str:
+                                    _is_retryable = (
+                                        "429" in _err_str
+                                        or "503" in _err_str
+                                        or "quota" in _err_str.lower()
+                                        or "RESOURCE_EXHAUSTED" in _err_str
+                                        or "UNAVAILABLE" in _err_str
+                                        or "high demand" in _err_str.lower()
+                                    )
+                                    if _is_retryable:
                                         if _model_name != _models_to_try[-1]:
-                                            st.toast(f"Quota {_model_name} atteint — passage au modèle suivant…")
-                                            _time.sleep(1)
+                                            st.toast(f"Modèle {_model_name} indisponible  -  passage au modèle suivant…")
+                                            _time.sleep(2)
                                             continue
-                                        _answer = "Quota Gemini atteint. Attendez 1 minute et réessayez."
+                                        # dernier modèle aussi indisponible : retry unique après pause
+                                        st.toast("Tous les modèles surchargés  -  nouvelle tentative dans 5 s…")
+                                        _time.sleep(5)
+                                        try:
+                                            _chat2 = _client.chats.create(
+                                                model=_models_to_try[0],
+                                                history=_history,
+                                                config=_config,
+                                            )
+                                            _answer = _chat2.send_message(_last_msg).text
+                                        except Exception:
+                                            _answer = "Service Gemini temporairement surchargé. Réessayez dans quelques secondes."
                                     else:
                                         _answer = "Erreur API Gemini : %s" % _err_str
                                     break
@@ -1630,7 +1657,7 @@ tab_arb, tab_intra, tab_imbalance, tab_lis, tab_comp, tab_sensi, tab_pays, tab_h
 # ══════════════════════════════════════════════════════════════════════════════
 # st.metric/st.dataframe/st.table/st.plotly_chart sont enveloppés pour
 # enregistrer tout ce qui s'affiche, onglet par onglet, sans dupliquer la
-# logique de chaque onglet — le rapport HTML (_build_global_diag_html) reste
+# logique de chaque onglet  -  le rapport HTML (_build_global_diag_html) reste
 # donc automatiquement à jour avec tout ajout futur de KPI/tableau/graphique.
 # Reset à chaque rerun (variable module-level, pas session_state).
 from collections import defaultdict as _defaultdict_rep
@@ -1693,25 +1720,25 @@ st.plotly_chart = _rep_plotly_chart
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# MONTE CARLO — Optimisation paramètres
+# MONTE CARLO  -  Optimisation paramètres
 # ══════════════════════════════════════════════════════════════════════════════
 
 
 # ── Configurations BESS réelles (feuille BESS de l'Excel) ────────────────────
 BESS_CONFIGS = [
-    {"nom":"Modèle 1 — 430 kW","power_MW":0.430,"n_cycles":1,"duration_h":1,
+    {"nom":"Modèle 1  -  430 kW","power_MW":0.430,"n_cycles":1,"duration_h":1,
      "efficiency":0.92,"jours_excl":[0,1,2,3,4,5],"h_debut":10,"h_fin":12,
      "desc":"430 kW · Indisponible lun-sam 10h-12h"},
-    {"nom":"Modèle 2 — 215 kW (mar-jeu restr.)","power_MW":0.215,"n_cycles":1,"duration_h":1,
+    {"nom":"Modèle 2  -  215 kW (mar-jeu restr.)","power_MW":0.215,"n_cycles":1,"duration_h":1,
      "efficiency":0.92,"jours_excl":[1,2,3],"h_debut":10,"h_fin":14,
      "desc":"215 kW · Indisponible mar-jeu 10h-14h"},
-    {"nom":"Modèle 3 — 215 kW (sans restr.)","power_MW":0.215,"n_cycles":1,"duration_h":1,
+    {"nom":"Modèle 3  -  215 kW (sans restr.)","power_MW":0.215,"n_cycles":1,"duration_h":1,
      "efficiency":0.92,"jours_excl":[],"h_debut":0,"h_fin":0,
      "desc":"215 kW · Disponible 24h/24, 7j/7"},
-    {"nom":"Modèle 1 — 430 kW (2 cycles)","power_MW":0.430,"n_cycles":2,"duration_h":1,
+    {"nom":"Modèle 1  -  430 kW (2 cycles)","power_MW":0.430,"n_cycles":2,"duration_h":1,
      "efficiency":0.92,"jours_excl":[0,1,2,3,4,5],"h_debut":10,"h_fin":12,
      "desc":"430 kW · 2 cycles/jour · Indisponible lun-sam 10h-12h"},
-    {"nom":"Modèle 3 — 215 kW (2 cycles)","power_MW":0.215,"n_cycles":2,"duration_h":1,
+    {"nom":"Modèle 3  -  215 kW (2 cycles)","power_MW":0.215,"n_cycles":2,"duration_h":1,
      "efficiency":0.92,"jours_excl":[],"h_debut":0,"h_fin":0,
      "desc":"215 kW · 2 cycles/jour · Sans restriction"},
 ]
@@ -1756,7 +1783,7 @@ def run_monte_carlo(file_bytes, configs_json):
 
 
 def show_monte_carlo_panel(tab_key, default_pow_max=2.0):
-    with st.expander("Simulation de Monte Carlo — Trouver la meilleure configuration BESS", expanded=False):
+    with st.expander("Simulation de Monte Carlo  -  Trouver la meilleure configuration BESS", expanded=False):
         st.caption("La simulation Monte Carlo teste automatiquement plusieurs configurations de batterie et les classe par PnL. Elle permet d'identifier la combinaison puissance/durée/cycles la plus rentable.")
         if st.button("Lancer la simulation de Monte Carlo (1000 tirages)", key=f"mc_run_{tab_key}"):
             import random as _rmc
@@ -1785,7 +1812,7 @@ def show_monte_carlo_panel(tab_key, default_pow_max=2.0):
             prog = st.progress(0)
             for i in range(N_ITER):
                 prog.progress((i + 1) / N_ITER,
-                              text=f"Monte Carlo : tirage {i+1}/{N_ITER} — {len(results_mc)} configs uniques testées")
+                              text=f"Monte Carlo : tirage {i+1}/{N_ITER}  -  {len(results_mc)} configs uniques testées")
                 pw   = rng.choice(POWERS)
                 dur  = rng.choice(DURATIONS)
                 ncyc = rng.choice(CYCLES)
@@ -1845,8 +1872,8 @@ def show_monte_carlo_panel(tab_key, default_pow_max=2.0):
                 f'Rdt {best.get("Rendement (%)")}% · {best.get("Restriction")} · '
                 f'Max {best.get("Max cyc/an")} cyc/an<br>'
                 f'PnL total : <b>{_fmt(pnl_b)} €</b> | '
-                f'Activation : <b>{best.get("Activation (%)","—")}%</b> | '
-                f'PnL/kW : <b>{best.get("PnL/kW","—")}</b>'
+                f'Activation : <b>{best.get("Activation (%)"," - ")}%</b> | '
+                f'PnL/kW : <b>{best.get("PnL/kW"," - ")}</b>'
                 f'</div>',
                 unsafe_allow_html=True
             )
@@ -1877,7 +1904,7 @@ with tab_arb:
     with c1:
         _cyc_opts  = [1, 2, 0]
         _cyc_labels = {1: "1 cycle / jour", 2: "2 cycles / jour",
-                       0: "Illimité — tous les cycles rentables du jour"}
+                       0: "Illimité  -  tous les cycles rentables du jour"}
         n_cycles = st.selectbox(
             "Cycles par jour",
             _cyc_opts,
@@ -1973,7 +2000,7 @@ with tab_arb:
     st.markdown('<p class="section">Résultats globaux</p>', unsafe_allow_html=True)
     _note_bm = ""
     if min_spread:
-        _note_bm = f" La borne max est calculée **sans** filtre de spread — elle représente le potentiel absolu du marché même si vous avez choisi de ne trader qu'au-dessus de {min_spread} €/MWh."
+        _note_bm = f" La borne max est calculée **sans** filtre de spread  -  elle représente le potentiel absolu du marché même si vous avez choisi de ne trader qu'au-dessus de {min_spread} €/MWh."
     st.caption(f"Synthese des performances sur toute la période. Le PnL réel tient compte de toutes vos contraintes. La borne max est le maximum théorique en supposant aucune restriction et une connaissance parfaite des prix.{_note_bm}")
 
     total_pnl        = daily["pnl"].sum()
@@ -2020,7 +2047,7 @@ with tab_arb:
               delta_color="off" if jours_usure == 0 else "inverse")
 
     # ── Graphique 1 : PnL annuel ─────────────────────────────────────────────
-    st.markdown('<p class="section">PnL annuel — borne max vs réel</p>', unsafe_allow_html=True)
+    st.markdown('<p class="section">PnL annuel  -  borne max vs réel</p>', unsafe_allow_html=True)
     st.caption("Comparaison annuelle entre PnL réel (barres bleues) et borne max théorique (barres claires). L'ecart entre les deux mesure le coût de vos restrictions operationnelles sur les revenus.")
     fig1 = go.Figure()
     fig1.add_trace(go.Bar(
@@ -2054,8 +2081,8 @@ with tab_arb:
     col_a, col_b = st.columns(2)
 
     with col_a:
-        # Spread HEBDOMADAIRE — une seule courbe continue sur toute la période
-        st.markdown('<p class="section">Spread moyen — par semaine (€/MWh)</p>',
+        # Spread HEBDOMADAIRE  -  une seule courbe continue sur toute la période
+        st.markdown('<p class="section">Spread moyen  -  par semaine (€/MWh)</p>',
                     unsafe_allow_html=True)
         st.caption("Spread hebdo = différence prix vente - prix achat. Un spread élevé = opportunité rentable.")
 
@@ -2103,7 +2130,7 @@ with tab_arb:
             showlegend=False, hoverinfo="skip",
         ))
 
-        # Courbe continue — vert clair
+        # Courbe continue  -  vert clair
         fig2.add_trace(go.Scatter(
             x=weekly_all["semaine"],
             y=weekly_all["spread_moy"],
@@ -2180,14 +2207,14 @@ with tab_arb:
         fig3.add_trace(go.Bar(
             x=list(range(24)), y=list(h_ch.values()),
             name="Charge (achat)", marker_color=C1,
-            hovertemplate="H%{x:02d} — Charge : <b>%{y} jours</b>"
+            hovertemplate="H%{x:02d}  -  Charge : <b>%{y} jours</b>"
                           " (%{customdata:.1f}%)<extra></extra>",
             customdata=[v / jours_actifs * 100 for v in h_ch.values()],
         ))
         fig3.add_trace(go.Bar(
             x=list(range(24)), y=list(h_dch.values()),
             name="Décharge (vente)", marker_color=C2,
-            hovertemplate="H%{x:02d} — Décharge : <b>%{y} jours</b>"
+            hovertemplate="H%{x:02d}  -  Décharge : <b>%{y} jours</b>"
                           " (%{customdata:.1f}%)<extra></extra>",
             customdata=[v / jours_actifs * 100 for v in h_dch.values()],
         ))
@@ -2366,7 +2393,7 @@ with tab_arb:
                                   f"{cy['spread']:.2f} €/MWh",
                                   delta=f"{cy['spread'] - spread_jour:+.2f} vs moy")
                 else:
-                    st.metric("Spread", "— Pas de cycle")
+                    st.metric("Spread", " -  Pas de cycle")
 
                 st.metric("PnL du jour", f"{pnl_jour:.2f} €")
                 st.metric("Énergie chargée", f"{energie_jour:.3f} MWh",
@@ -2399,7 +2426,7 @@ with tab_arb:
                 fig_d.add_trace(go.Bar(
                     x=list(range(24)), y=prix_j.tolist(),
                     marker_color=bar_colors, name="Prix spot",
-                    hovertemplate="H%{x:02d} — Prix : <b>%{y:.2f} €/MWh</b><extra></extra>",
+                    hovertemplate="H%{x:02d}  -  Prix : <b>%{y:.2f} €/MWh</b><extra></extra>",
                 ))
 
                 # Couleurs par cycle
@@ -2419,7 +2446,7 @@ with tab_arb:
                         name=f"Charge {lbl} ({duration_h}h)",
                         marker=dict(color=c_ch, size=18, symbol="triangle-up",
                                     line=dict(color="white", width=1)),
-                        hovertemplate=f"H%{{x:02d}} — Charge {lbl} : <b>%{{y:.2f}} €/MWh</b><extra></extra>",
+                        hovertemplate=f"H%{{x:02d}}  -  Charge {lbl} : <b>%{{y:.2f}} €/MWh</b><extra></extra>",
                     ))
                     fig_d.add_trace(go.Scatter(
                         x=_h_dch, y=prix_j[_h_dch],
@@ -2427,7 +2454,7 @@ with tab_arb:
                         name=f"Decharge {lbl} ({duration_h}h)",
                         marker=dict(color=c_dch, size=18, symbol="triangle-down",
                                     line=dict(color="white", width=1)),
-                        hovertemplate=f"H%{{x:02d}} — Decharge {lbl} : <b>%{{y:.2f}} €/MWh</b><extra></extra>",
+                        hovertemplate=f"H%{{x:02d}}  -  Decharge {lbl} : <b>%{{y:.2f}} €/MWh</b><extra></extra>",
                     ))
                     fig_d.add_shape(type="line", x0=-0.5, x1=23.5,
                         y0=cy["prix_charge"], y1=cy["prix_charge"],
@@ -2520,7 +2547,7 @@ with tab_arb:
 
     # ── PRIORITÉ 1 : Analyse de l'impact de l'usure ──────────────────────────
     st.markdown("---")
-    st.markdown('<p class="section">Impact de l\'usure — jours bloqués et PnL manqué</p>',
+    st.markdown('<p class="section">Impact de l\'usure  -  jours bloqués et PnL manqué</p>',
                 unsafe_allow_html=True)
     st.caption(
         f"La batterie est limitée à {max_cycles or 'illimité'} cycles/an. "
@@ -2580,7 +2607,7 @@ with tab_arb:
     )
     apply_bb(fig_u1)
     if not has_quota:
-        st.caption("Quota illimité — aucun jour bloqué.")
+        st.caption("Quota illimité  -  aucun jour bloqué.")
     else:
         st.caption("Jours bloqués : quota de cycles annuel atteint. Concentrés en fin d'année.")
     st.plotly_chart(fig_u1, width="stretch", config=PLOTLY_CFG, key="fig_usure_jours")
@@ -2595,14 +2622,14 @@ with tab_arb:
     if has_restr:
         fig_u2.add_trace(go.Bar(
             x=grp_u["label"], y=grp_u["pnl_manque_restrictions"].round(0),
-            name="PnL manqué — restrictions horaires (€)",
+            name="PnL manqué  -  restrictions horaires (€)",
             marker_color="#f5a623",
             hovertemplate="<b>%{x}</b><br>PnL manqué restrictions : %{y:.0f} €<extra></extra>",
         ))
     if has_quota:
         fig_u2.add_trace(go.Bar(
             x=grp_u["label"], y=grp_u["pnl_manque_quota"].round(0),
-            name="PnL manqué — quota cycles (€)",
+            name="PnL manqué  -  quota cycles (€)",
             marker_color="#ef5350",
             hovertemplate="<b>%{x}</b><br>PnL manqué quota : %{y:.0f} €<extra></extra>",
         ))
@@ -2620,7 +2647,7 @@ with tab_arb:
     if has_quota:
         _cap_parts.append(f"PnL manqué quota (rouge) : {pnl_manque_quota_total:,.0f} €")
     if not has_restr and not has_quota:
-        _cap_parts.append("aucune perte détectée — quota illimité et restrictions sans impact")
+        _cap_parts.append("aucune perte détectée  -  quota illimité et restrictions sans impact")
     st.caption(" · ".join(_cap_parts))
     st.plotly_chart(fig_u2, width="stretch", config=PLOTLY_CFG, key="fig_usure_pnl")
 
@@ -2628,10 +2655,10 @@ with tab_arb:
     ku1, ku2, ku3, ku4 = st.columns(4)
     ku1.metric("Jours bloqués (quota)", f"{jours_usure}",
                delta=f"{jours_usure/jours_total*100:.1f}% du total" if jours_usure > 0 else "Quota illimité")
-    ku2.metric("PnL manqué — restrictions", f"{_fmt(pnl_manque_restrictions_total)} €",
-               delta=f"{pnl_manque_restrictions_total/total_pnl*100:.1f}% du PnL réel" if total_pnl > 0 else "—")
-    ku3.metric("PnL manqué — quota", f"{_fmt(pnl_manque_quota_total)} €",
-               delta=f"{pnl_manque_quota_total/total_pnl*100:.1f}% du PnL réel" if total_pnl > 0 else "—")
+    ku2.metric("PnL manqué  -  restrictions", f"{_fmt(pnl_manque_restrictions_total)} €",
+               delta=f"{pnl_manque_restrictions_total/total_pnl*100:.1f}% du PnL réel" if total_pnl > 0 else " - ")
+    ku3.metric("PnL manqué  -  quota", f"{_fmt(pnl_manque_quota_total)} €",
+               delta=f"{pnl_manque_quota_total/total_pnl*100:.1f}% du PnL réel" if total_pnl > 0 else " - ")
     if max_cycles:
         ku4.metric("Conseil quota",
                    f"Actuel : {max_cycles} → tester {min(365, max_cycles + 50)}",
@@ -2642,7 +2669,7 @@ with tab_arb:
 
     # ── PRIORITÉ 2 : Analyse ROI / Payback ───────────────────────────────────
     st.markdown("---")
-    st.markdown('<p class="section">Analyse ROI — Retour sur investissement</p>',
+    st.markdown('<p class="section">Analyse ROI  -  Retour sur investissement</p>',
                 unsafe_allow_html=True)
     st.caption(
         "Calcul de la rentabilité de l'investissement basé sur le modèle sélectionné dans la sidebar. "
@@ -2651,22 +2678,22 @@ with tab_arb:
     )
 
     # Modèle déjà sélectionné dans la sidebar via _modele_choix et power_MW
-    # CAPEX batteries LFP utility-scale 2h, France — sources multiples mai 2026
+    # CAPEX batteries LFP utility-scale 2h, France  -  sources multiples mai 2026
     # Taux USD/EUR : 0.85 (mai 2026)
     # Sources : IEA Electricity 2026, BNEF Cost Survey 2025, Ember oct. 2025, Capstone DC nov. 2025
     IEA_CAPEX = {
-        "2022 — 330 €/kWh (IEA réel)":              330,
-        "2024 — 150 €/kWh (IEA Electricity 2026)":  150,
-        "2025 — 120 €/kWh (BNEF / Ember)":          120,
-        "2026 — 105 €/kWh (Capstone DC France)":    105,
-        "2030 — 85 €/kWh  (BNEF projection)":        85,
+        "2022  -  330 €/kWh (IEA réel)":              330,
+        "2024  -  150 €/kWh (IEA Electricity 2026)":  150,
+        "2025  -  120 €/kWh (BNEF / Ember)":          120,
+        "2026  -  105 €/kWh (Capstone DC France)":    105,
+        "2030  -  85 €/kWh  (BNEF projection)":        85,
     }
     IEA_CYCLES = 6500   # LFP stationnaire 2025 : 6000-7000 cycles (BNEF/Ember)
-    IEA_DUREE  = 15     # ans — durée de vie nominale (Capstone DC, Ember)
+    IEA_DUREE  = 15     # ans  -  durée de vie nominale (Capstone DC, Ember)
 
     # Info modèle actif
     st.info(
-        f"Modèle actif : **{_modele_choix}** — {power_MW*1000:.0f} kW — {power_MW} MW  "
+        f"Modèle actif : **{_modele_choix}**  -  {power_MW*1000:.0f} kW  -  {power_MW} MW  "
         f"| Capacité : {capacite_auto:.3f} MWh  "
         f"| Rendement : {efficiency*100:.0f}%  "
         f"| Quota : {max_cycles or 'illimité'} cycles/an  "
@@ -2709,16 +2736,16 @@ with tab_arb:
         ) / 100.0
         st.caption("VAN calculée également à 3% et 6% pour comparaison (méthode fichier Phase 2).")
 
-    with st.expander("Données de référence — batteries LFP stationnaire (sources mai 2026)", expanded=False):
+    with st.expander("Données de référence  -  batteries LFP stationnaire (sources mai 2026)", expanded=False):
         st.markdown("""
 **Sources : IEA Electricity 2026 · IEA Global Energy Review 2026 · BNEF Cost Survey 2025 · Ember oct. 2025 · Capstone DC nov. 2025**
 
 **CAPEX utility-scale 2h, France (taux USD/EUR : 0.85)**
-- **2022 : 330 €/kWh** — IEA Electricity 2026 (340 $/kWh × 0.85 + premium Europe)
-- **2024 : 150 €/kWh** — IEA Electricity 2026 (fin 2024, après baisse de 40 % sur l'année)
-- **2025 : 120 €/kWh** — BNEF Cost Survey 2025 (117 $/kWh mondial + premium Europe)
-- **2026 : 105 €/kWh** — Capstone DC France (€90–100/kWh equipment + balance of system)
-- **2030 : 85 €/kWh** — BNEF projection Europe (101 $/kWh × 0.85)
+- **2022 : 330 €/kWh**  -  IEA Electricity 2026 (340 $/kWh × 0.85 + premium Europe)
+- **2024 : 150 €/kWh**  -  IEA Electricity 2026 (fin 2024, après baisse de 40 % sur l'année)
+- **2025 : 120 €/kWh**  -  BNEF Cost Survey 2025 (117 $/kWh mondial + premium Europe)
+- **2026 : 105 €/kWh**  -  Capstone DC France (€90–100/kWh equipment + balance of system)
+- **2030 : 85 €/kWh**  -  BNEF projection Europe (101 $/kWh × 0.85)
 - **Baisse** : -58% entre 2019 et 2024 (IEA). -45% supplémentaires en 2025 (IEA Global Energy Review 2026).
 - **Projets 2h coûtent ~10-15% plus cher par kWh que projets 4h** (BNEF)
 
@@ -2729,13 +2756,13 @@ with tab_arb:
 - **Dégradation** : 2%/an garantie fabricant (Ember) | capacité résiduelle ~65% à 20 ans
 - **Durée de vie** : 15 ans nominale (Capstone DC, Ember)
 - **OPEX** : 2.5% du CAPEX/an (NREL ATB 2025) | 0 si inclus garantie constructeur
-- **Chimie dominante** : LFP — 90% des nouvelles installations de stockage stationnaire en 2025 (IEA GER 2026)
+- **Chimie dominante** : LFP  -  90% des nouvelles installations de stockage stationnaire en 2025 (IEA GER 2026)
 
 **Marché France 2025-2026**
 - Capacité installée début 2026 : ~1.5 GW (Modo Energy)
 - Pipeline RTE : ~13 GW en file d'attente
-- Revenus aFRR : effondrement de 66 €/MW/h (2024) à 16 €/MW/h (jan. 2026) — saturation
-- IRR unlevered France : 5-7% (sous le WACC de 8%) — projet standalone non bancable sans hédging (Capstone DC)
+- Revenus aFRR : effondrement de 66 €/MW/h (2024) à 16 €/MW/h (jan. 2026)  -  saturation
+- IRR unlevered France : 5-7% (sous le WACC de 8%)  -  projet standalone non bancable sans hédging (Capstone DC)
         """)
 
     # Calcul CAPEX total
@@ -2850,7 +2877,7 @@ with tab_arb:
                         f"{_irr*100:.1f}%/an" if _irr > -0.4 else "< -40%",
                         delta="Supérieur au WACC" if _irr > taux_actu else "Inférieur au WACC",
                         delta_color="normal" if _irr > taux_actu else "inverse",
-                        help="Taux de Rendement Interne — taux qui annule la VAN sur la durée de projection.")
+                        help="Taux de Rendement Interne  -  taux qui annule la VAN sur la durée de projection.")
     roi_cols2[3].metric("Méthode projection",
                         "Interpolation annuelle",
                         delta=f"Ancrage sur {len(_annees_sim)} années simulées",
@@ -2931,7 +2958,7 @@ with tab_arb:
     # Annotation CAPEX source
     fig_roi.add_annotation(
         x=0.01, y=0.02, xref="paper", yref="paper",
-        text=f"CAPEX : {capex_kwh} euros/kWh — Source IEA 2024",
+        text=f"CAPEX : {capex_kwh} euros/kWh  -  Source IEA 2024",
         showarrow=False, font=dict(size=9, color="#888"),
         xanchor="left",
     )
@@ -2949,7 +2976,7 @@ with tab_arb:
         f"Bleu = cash-flow non actualisé avec dégradation {taux_degrad*100:.0f}%/an. "
         "Pointillé = sans dégradation (optimiste). "
         f"Orange = VAN actualisée au taux {taux_actu*100:.0f}%/an. "
-        f"CAPEX retenu : {capex_kwh} €/kWh — Sources : IEA Electricity 2026, BNEF, Ember, Capstone DC (mai 2026)."
+        f"CAPEX retenu : {capex_kwh} €/kWh  -  Sources : IEA Electricity 2026, BNEF, Ember, Capstone DC (mai 2026)."
     )
     st.plotly_chart(fig_roi, width="stretch", config=PLOTLY_CFG, key="fig_roi_arb")
     st.caption(
@@ -2959,7 +2986,7 @@ with tab_arb:
     )
     # ── Export diagnostic complet ─────────────────────────────────────────────
     st.markdown("---")
-    st.markdown('<p class="section">Diagnostic — Exporter pour le développeur</p>',
+    st.markdown('<p class="section">Diagnostic  -  Exporter pour le développeur</p>',
                 unsafe_allow_html=True)
     st.caption("Génère un fichier HTML avec toutes les donnees et résultats visibles à l'écran.")
 
@@ -3062,7 +3089,7 @@ with tab_arb:
 
         html = f"""<!DOCTYPE html><html lang="fr"><head>
 <meta charset="UTF-8">
-<title>BESS Diagnostic — {diag["meta"]["generated_at"]}</title>
+<title>BESS Diagnostic  -  {diag["meta"]["generated_at"]}</title>
 <style>
 body{{font-family:'Segoe UI',Arial,sans-serif;background:#f8f9fb;color:#1a3a5c;margin:0;padding:20px;}}
 h1{{background:#1a3a5c;color:white;padding:12px 20px;border-radius:6px;font-size:1.2rem;margin-bottom:8px;}}
@@ -3083,7 +3110,7 @@ tr:nth-child(even) td{{background:#f0f5fb;}}
           font-size:11px;margin:16px 0 6px 0;border-radius:3px;}}
 .good{{color:#375623;font-weight:700;}} .bad{{color:#c00000;font-weight:700;}}
 </style></head><body>
-<h1> BESS Valorisation — Diagnostic complet</h1>
+<h1> BESS Valorisation  -  Diagnostic complet</h1>
 <p>Généré le <b>{diag["meta"]["generated_at"]}</b> &nbsp;|&nbsp;
    Fichier : <b>{diag["meta"]["fichier_excel"]}</b> &nbsp;|&nbsp;
    Période : <b>{" · ".join(str(a) for a in diag["meta"]["annees"])}</b> &nbsp;|&nbsp;
@@ -3112,7 +3139,7 @@ tr:nth-child(even) td{{background:#f0f5fb;}}
      "spread_absolu_moy","spread_moy","pnl_absolu_total","pnl_total",
      "pnl_par_MW","energie_totale_MWh","cycles_totaux"])}
 
-<h2>Profil horaire — fréquence charge / décharge</h2>
+<h2>Profil horaire  -  fréquence charge / décharge</h2>
 <table><tr><th>Heure</th>
 {''.join(f"<th>H{h:02d}</th>" for h in range(24))}
 </tr>
@@ -3140,7 +3167,7 @@ tr:nth-child(even) td{{background:#f0f5fb;}}
 <h2>JSON brut complet</h2>
 <pre>{json_str}</pre>
 <hr><p style="color:#888;font-size:11px;">
-BESS Valorisation v2.0 — Plénitude B-Charge — Diagnostic technique</p>
+BESS Valorisation v2.0  -  Plénitude B-Charge  -  Diagnostic technique</p>
 </body></html>"""
 
         st.download_button(
@@ -3153,28 +3180,28 @@ BESS Valorisation v2.0 — Plénitude B-Charge — Diagnostic technique</p>
         st.success("Fichier prêt ! Téléchargez-le et envoyez-le au développeur.")
 
 # ══════════════════════════════════════════════════════════════════════════════
-# ONGLET — ARBITRAGE INTRADAY (chargé en 2e position, juste après Arbitrage DA)
+# ONGLET  -  ARBITRAGE INTRADAY (chargé en 2e position, juste après Arbitrage DA)
 # ══════════════════════════════════════════════════════════════════════════════
 
 with tab_intra:
     _diag_set_tab("intra")
-    st.markdown('<p class="section">Arbitrage Intraday — Comparaison des marchés EPEX</p>', unsafe_allow_html=True)
+    st.markdown('<p class="section">Arbitrage Intraday  -  Comparaison des marchés EPEX</p>', unsafe_allow_html=True)
     st.caption(
         "Contrairement au Day-Ahead (un prix fixé la veille pour chaque heure), l'intraday permet d'ajuster ses positions "
-        "le jour même via plusieurs enchères successives (IDA1/IDA2/IDA3 — prix de clearing, recalculé à chaque enchère) "
+        "le jour même via plusieurs enchères successives (IDA1/IDA2/IDA3  -  prix de clearing, recalculé à chaque enchère) "
         "ou en continu tout au long de la journée (prix moyen pondéré des transactions réelles, jusqu'à peu avant la livraison). "
-        "Chaque source de prix donne des résultats différents — la comparaison permet de savoir quel marché rémunère le mieux la batterie."
+        "Chaque source de prix donne des résultats différents  -  la comparaison permet de savoir quel marché rémunère le mieux la batterie."
     )
 
     # ── Paramètres du scénario ────────────────────────────────────────────────
     st.markdown('<p class="section">Paramètres du scénario</p>', unsafe_allow_html=True)
-    st.caption("Configurez les caractéristiques de la batterie : puissance, cycles, durée, rendement et restrictions horaires. Ces paramètres sont propres à cet onglet — ils déterminent quand et combien de fois par jour la batterie peut charger/décharger sur les marchés intraday, indépendamment de la simulation Day-Ahead.")
+    st.caption("Configurez les caractéristiques de la batterie : puissance, cycles, durée, rendement et restrictions horaires. Ces paramètres sont propres à cet onglet  -  ils déterminent quand et combien de fois par jour la batterie peut charger/décharger sur les marchés intraday, indépendamment de la simulation Day-Ahead.")
     _ic1, _ic2, _ic3, _ic4, _ic5, _ic6 = st.columns(6)
     with _ic1:
         _intra_n_cyc = st.selectbox(
             "Cycles par jour", [1, 2, 0],
             format_func=lambda x: {1:"1 cycle / jour",2:"2 cycles / jour",
-                                    0:"Illimité — tous les cycles rentables du jour"}[x],
+                                    0:"Illimité  -  tous les cycles rentables du jour"}[x],
             index=0, key="intra_n_cyc",
         )
     with _ic2:
@@ -3207,7 +3234,7 @@ with tab_intra:
     # ── Upload ────────────────────────────────────────────────────────────────
     st.markdown('<p class="section">Fichiers de prix</p>', unsafe_allow_html=True)
     _all_intra_files = st.file_uploader(
-        "Déposez tous vos fichiers intraday ici (ZIP ou CSV) — le parseur détecte tout automatiquement",
+        "Déposez tous vos fichiers intraday ici (ZIP ou CSV)  -  le parseur détecte tout automatiquement",
         type=["zip", "csv"],
         accept_multiple_files=True,
         key="intra_files_all",
@@ -3216,7 +3243,7 @@ with tab_intra:
             "• ZIP monolithiques (Intraday Continuous.zip, Intraday_part1/2/3.zip) → scannés automatiquement\n"
             "• ZIP EPEX nommés (Continuous_Index-FR-2021.zip, etc.)\n"
             "• CSV IDA1 / IDA2 / IDA3 (pan-european prices)\n"
-            "Le marché continu n'utilise que Continuous_Index (IDFULL) — Continuous_Statistics, s'il est présent, "
+            "Le marché continu n'utilise que Continuous_Index (IDFULL)  -  Continuous_Statistics, s'il est présent, "
             "est ignoré car redondant avec l'Index. Le parseur détecte le type de chaque fichier et crée un onglet par marché."
         )
     )
@@ -3224,9 +3251,9 @@ with tab_intra:
     _intra_files_cont = [f for f in (_all_intra_files or []) if f.name.lower().endswith('.zip')]
 
     if not _all_intra_files:
-        st.info("Uploadez vos fichiers intraday ci-dessus — ZIP EPEX, CSV IDA1/2/3, ou les 3 parts monolithiques.")
+        st.info("Uploadez vos fichiers intraday ci-dessus  -  ZIP EPEX, CSV IDA1/2/3, ou les 3 parts monolithiques.")
     else:
-        st.caption(f"**{len(_all_intra_files)} fichier(s) chargés** — {len(_intra_files_cont)} ZIP · {len(_intra_files_ida)} CSV")
+        st.caption(f"**{len(_all_intra_files)} fichier(s) chargés**  -  {len(_intra_files_cont)} ZIP · {len(_intra_files_ida)} CSV")
 
         if st.button("Lancer la simulation intraday", key="btn_intra_run", type="primary"):
             st.session_state["_intra_run"] = True
@@ -3241,12 +3268,12 @@ with tab_intra:
 
             @st.cache_data(show_spinner=False)
             def _load_market_pivot_cached(file_items: tuple, kind, index_names: tuple = None):
-                """Parsing seul (coûteux, plusieurs minutes sur un gros ZIP) — mis en
+                """Parsing seul (coûteux, plusieurs minutes sur un gros ZIP)  -  mis en
                 cache par contenu de fichiers + kind + index_names. Indépendant de
                 puissance/cycles/durée/restrictions : changer ces paramètres ne
                 re-déclenche donc pas un re-parsing, seule _simulate_market_cached
                 re-tourne. index_names : pour le marché continu, demander plusieurs
-                IndexName (IDFULL/ID1/ID3) en un seul parsing — pv devient alors un
+                IndexName (IDFULL/ID1/ID3) en un seul parsing  -  pv devient alors un
                 dict {nom: pivot} au lieu d'un DataFrame unique."""
                 from bess_engine import load_intraday as _li_c
 
@@ -3267,7 +3294,7 @@ with tab_intra:
 
             @st.cache_data(show_spinner=False)
             def _simulate_market_cached(pv, params_json):
-                """Simulation seule (rapide) — mise en cache par pivot + paramètres
+                """Simulation seule (rapide)  -  mise en cache par pivot + paramètres
                 batterie, pour rendre instantané un aller-retour 1h→2h→1h une fois
                 chaque combinaison déjà calculée une fois."""
                 from bess_engine import (simulate_arbitrage as _sa_c,
@@ -3291,10 +3318,6 @@ with tab_intra:
             _p_intra_json = _j_intra.dumps(_p_intra_base, sort_keys=True)
 
             _markets = {}
-            _prog_m = st.progress(0, text="Lecture des fichiers…")
-
-            with st.spinner("Lecture des fichiers…"):
-                _all_src_raw = {f.name: f.read() for f in _all_intra_files}
 
             # ── Scan du contenu de chaque ZIP ─────────────────────────────────
             def _scan_zip(raw: bytes) -> dict:
@@ -3309,8 +3332,7 @@ with tab_intra:
                     pass
                 return found
 
-            # ── Construire les groupes par marché ─────────────────────────────
-            # Le marché continu n'est représenté que par Continuous_Index (IDFULL) —
+            # ── Construire les groupes par marché (lecture fichier par fichier) ─
             # Continuous_Statistics est volontairement ignoré : sur le même créneau,
             # les deux mesurent le même marché continu (résultats quasi identiques),
             # et Index seul, avec la priorité 60min→30min→15min, couvre déjà la
@@ -3319,8 +3341,14 @@ with tab_intra:
             _all_groups   = {}   # {market: [(name, bytes), ...]}
             _trades_srcs  = []   # [(name, bytes), ...] pour bid/ask uniquement
 
-            for _fname, _raw in _all_src_raw.items():
-                fu = _fname.upper()
+            _n_files = len(_all_intra_files)
+            _prog_m  = st.progress(0, text="Lecture des fichiers…")
+            for _fi, _f in enumerate(_all_intra_files):
+                _prog_m.progress(int(_fi / max(_n_files, 1) * 40),
+                                 text=f"Lecture de {_f.name}…")
+                _fname = _f.name
+                _raw   = _f.read()
+                fu     = _fname.upper()
 
                 # CSV IDA
                 if _fname.lower().endswith('.csv'):
@@ -3330,7 +3358,8 @@ with tab_intra:
 
                 # ZIP nommé explicitement
                 if "STATISTIC" in fu:
-                    continue  # ignoré : redondant avec Continuous_Index, cf. note ci-dessus
+                    del _raw   # ignoré et libéré immédiatement
+                    continue
                 elif "INDEX" in fu and "INTRADAY" not in fu and "PART" not in fu:
                     _all_groups.setdefault("Continuous", []).append((_fname, _raw))
                 elif "TRADE" in fu and "INTRADAY" not in fu and "PART" not in fu:
@@ -3342,6 +3371,8 @@ with tab_intra:
                         _all_groups.setdefault("Continuous", []).append((_fname, _raw))
                     if _inner.get('Continuous_Trades'):
                         _trades_srcs.append((_fname, _raw))
+                    if not _inner.get('Continuous') and not _inner.get('Continuous_Trades'):
+                        del _raw   # aucun marché reconnu, libérer
 
             # Dédupliquer (un même fichier peut alimenter plusieurs marchés)
             for _mkt in list(_all_groups.keys()):
@@ -3365,7 +3396,7 @@ with tab_intra:
             _kind_for_market = {"Continuous": "index"}
             # Continuous_Index publie 3 références dans le même fichier (IDFULL =
             # sur toute la session continue, ID1/ID3 = indice calculé 1h/3h avant
-            # livraison) — on les extrait toutes les 3 en un seul parsing pour les
+            # livraison)  -  on les extrait toutes les 3 en un seul parsing pour les
             # comparer, sans avoir à re-uploader quoi que ce soit en plus.
             _index_names_for_market = {"Continuous": ("IDFULL", "ID1", "ID3")}
 
@@ -3400,7 +3431,7 @@ with tab_intra:
                                             or _sub_name in r.get('index_names', [_sub_name]))],
                         }
                 except Exception as _em:
-                    st.warning(f"{_mname} : erreur — {_em}")
+                    st.warning(f"{_mname} : erreur  -  {_em}")
 
             # Si pas encore de bid/ask et qu'on a des sources Trades → passe dédiée légère
             if st.session_state.get("_intra_bas") is None and _trades_srcs:
@@ -3417,7 +3448,7 @@ with tab_intra:
                 _rng_txt = (f" · Période échantillonnée : **{_bas_rng[0].strftime('%d/%m/%Y')} → {_bas_rng[1].strftime('%d/%m/%Y')}**"
                             if _bas_rng else "")
                 st.info(
-                    f"**Spread Bid/Ask** (Continuous Trades) — "
+                    f"**Spread Bid/Ask** (Continuous Trades)  -  "
                     f"Spread moyen : **{float(_bas_final['spread'].mean()):.2f} €/MWh** · "
                     f"Coût de friction du marché continu, visible dans chaque onglet de marché."
                     f"{_rng_txt}"
@@ -3429,6 +3460,7 @@ with tab_intra:
             st.session_state["_intra_provenance"] = _provenance
             if _trades_srcs:
                 st.session_state["_intra_trades_srcs"] = _trades_srcs
+            st.session_state["_intra_run"] = False
 
         _markets = st.session_state.get("_intra_markets")
         if _markets:
@@ -3440,7 +3472,7 @@ with tab_intra:
                         "Pour chaque marché simulé : fichier uploadé source, sous-fichier parsé à l'intérieur, "
                         "IndexName extrait et nombre de jours/heures disponibles. "
                         "Résolution horaire : priorité à la ligne 60 min (déjà la moyenne pondérée exacte de l'heure) "
-                        "— si absente pour un créneau donné, reconstruction depuis les tranches 30 min puis 15 min "
+                        " -  si absente pour un créneau donné, reconstruction depuis les tranches 30 min puis 15 min "
                         "pour ne perdre aucune période."
                     )
                     for _lbl, _p in _prov.items():
@@ -3451,7 +3483,7 @@ with tab_intra:
                         if _rep:
                             _rep_rows = []
                             for _r in _rep:
-                                _idx_str = ", ".join(_r.get("index_names", [])) if _r.get("index_names") else "—"
+                                _idx_str = ", ".join(_r.get("index_names", [])) if _r.get("index_names") else " - "
                                 _nb_j = _r["nb_jours"]
                                 _rep_rows.append({
                                     "Sous-fichier parsé": _r["fichier"],
@@ -3471,12 +3503,12 @@ with tab_intra:
             st.markdown('<p class="section">Comparaison des marchés</p>', unsafe_allow_html=True)
             st.caption(
                 "Chaque ligne = un marché simulé avec les mêmes paramètres. "
-                "PnL/MW/an = métrique clé pour comparer — plus c'est élevé, plus le marché rémunère bien la batterie. "
-                "Spread moy. = volatilité des prix — un spread élevé = plus d'opportunités d'arbitrage. "
+                "PnL/MW/an = métrique clé pour comparer  -  plus c'est élevé, plus le marché rémunère bien la batterie. "
+                "Spread moy. = volatilité des prix  -  un spread élevé = plus d'opportunités d'arbitrage. "
                 "Prix utilisé : pour IDA1/2/3, le prix de clearing unique de l'enchère (aucune ambiguïté possible). "
                 "Pour le marché continu, l'IndexPrice de Continuous_Index, qui publie 3 références dans le même "
-                "fichier — IDFULL (sur toute la session continue), ID1 (indice calculé 1h avant livraison) et "
-                "ID3 (3h avant livraison) — affichées ici comme 3 marchés séparés pour comparer leur potentiel. "
+                "fichier  -  IDFULL (sur toute la session continue), ID1 (indice calculé 1h avant livraison) et "
+                "ID3 (3h avant livraison)  -  affichées ici comme 3 marchés séparés pour comparer leur potentiel. "
                 "Continuous_Statistics n'est pas utilisé séparément, il mesure le même marché continu que l'Index."
             )
 
@@ -3497,7 +3529,7 @@ with tab_intra:
                 _comp_rows.append({
                     "Marché":             _mname,
                     "Type":               "Auction" if _mname.startswith("IDA") else "Continu",
-                    "Prix utilisé":       _PRIX_SRC_M.get(_mname, "—"),
+                    "Prix utilisé":       _PRIX_SRC_M.get(_mname, " - "),
                     "Période":            f"{int(_y['annee'].min())}–{int(_y['annee'].max())}",
                     "PnL total (€)":      _fmt(_pnl),
                     "PnL/MW/an (€)":      _fmt(_pnl / power_MW / max(_nans, 1)),
@@ -3528,7 +3560,7 @@ with tab_intra:
                 margin=dict(t=10,b=80,l=60,r=10),
             )
             apply_bb(_fig_comp_m)
-            st.caption("PnL par MW installé — normalise le résultat par la puissance simulée, pour comparer les marchés indépendamment de la taille de la batterie (utile si vous testez plusieurs configurations).")
+            st.caption("PnL par MW installé  -  normalise le résultat par la puissance simulée, pour comparer les marchés indépendamment de la taille de la batterie (utile si vous testez plusieurs configurations).")
             st.plotly_chart(_fig_comp_m, width="stretch", config=PLOTLY_CFG, key="intra_comp_bar")
 
             # ── Graphique PnL cumulé par marché ──────────────────────────────
@@ -3549,11 +3581,11 @@ with tab_intra:
                 margin=dict(t=10,b=80,l=60,r=10), hovermode="x unified",
             )
             apply_bb(_fig_cum_m)
-            st.caption("PnL cumulé — la courbe la plus haute = marché le plus rentable sur la durée. La pente indique le rythme de gain ; un écart qui se creuse dans le temps signale un marché qui devient structurellement plus (ou moins) intéressant.")
+            st.caption("PnL cumulé  -  la courbe la plus haute = marché le plus rentable sur la durée. La pente indique le rythme de gain ; un écart qui se creuse dans le temps signale un marché qui devient structurellement plus (ou moins) intéressant.")
             st.plotly_chart(_fig_cum_m, width="stretch", config=PLOTLY_CFG, key="intra_cum_comp")
 
-            # ── Spread Bid/Ask — section globale ──────────────────────────────
-            st.markdown('<p class="section">Spread Bid/Ask — Coût de friction du marché continu</p>',
+            # ── Spread Bid/Ask  -  section globale ──────────────────────────────
+            st.markdown('<p class="section">Spread Bid/Ask  -  Coût de friction du marché continu</p>',
                         unsafe_allow_html=True)
             st.caption(
                 "WAP (Weighted Average Price) = prix moyen pondéré par les volumes échangés. "
@@ -3593,7 +3625,7 @@ with tab_intra:
                             help="Heure où le coût de transaction (ask − bid) est le plus élevé.")
                 _bgc.metric("Heures à spread négatif",
                             f"{int((_bas_disp['spread'] < 0).sum())}/24",
-                            help="Heures où les vendeurs ont reçu plus que les acheteurs n'ont payé — "
+                            help="Heures où les vendeurs ont reçu plus que les acheteurs n'ont payé  -  "
                                  "anomalie / inversion temporaire de marché, pas le cas normal.")
 
                 _fig_bas_g = go.Figure()
@@ -3601,7 +3633,7 @@ with tab_intra:
                     x=[f"H{int(h):02d}" for h in _bas_disp.index],
                     y=_bas_disp['spread'].values,
                     marker_color=[C1 if v >= 0 else "#c62828" for v in _bas_disp['spread'].values],
-                    hovertemplate="H%{x} — Bid/Ask : <b>%{y:.2f} €/MWh</b><extra></extra>",
+                    hovertemplate="H%{x}  -  Bid/Ask : <b>%{y:.2f} €/MWh</b><extra></extra>",
                 ))
                 _fig_bas_g.add_hline(y=_bas_moy_g, line_dash="dot", line_color=ORANGE,
                                      annotation_text=f"Moy: {_bas_moy_g:.2f} €/MWh")
@@ -3613,7 +3645,7 @@ with tab_intra:
                 )
                 apply_bb(_fig_bas_g)
                 st.caption(
-                    "Spread bid/ask par heure — WAP achats (ask) − WAP ventes (bid). "
+                    "Spread bid/ask par heure  -  WAP achats (ask) − WAP ventes (bid). "
                     "Bleu = spread positif (normal, coût de friction réel). Rouge = spread négatif (anomalie). "
                     "Ce spread représente le coût de friction réel à déduire du PnL théorique continu."
                 )
@@ -3622,12 +3654,12 @@ with tab_intra:
                 # ── Ventilation par produit (Quarter vs Hour) ───────────────────
                 _bas_prod = st.session_state.get("_intra_bas_product")
                 if _bas_prod is not None and not _bas_prod.empty:
-                    st.markdown('<p class="section">Spread Bid/Ask par produit — Quart d\'heure vs Heure</p>',
+                    st.markdown('<p class="section">Spread Bid/Ask par produit  -  Quart d\'heure vs Heure</p>',
                                 unsafe_allow_html=True)
                     st.caption(
                         "Quarter-Hour (livraison par bloc de 15 min) et Hour (bloc de 1h) sont les deux granularités "
-                        "tradées sur le marché continu. Elles ont des liquidités différentes — moins de participants "
-                        "sur le quart d'heure — donc leur spread bid/ask reflète des coûts de friction distincts à l'achat/vente."
+                        "tradées sur le marché continu. Elles ont des liquidités différentes  -  moins de participants "
+                        "sur le quart d'heure  -  donc leur spread bid/ask reflète des coûts de friction distincts à l'achat/vente."
                     )
                     _fig_bas_p = go.Figure()
                     for _prod, _clr_p in [("Hour", C3), ("Quarter", C4)]:
@@ -3639,7 +3671,7 @@ with tab_intra:
                             x=[f"H{int(h):02d}" for h in _sub.index],
                             y=_sub['spread'].values,
                             marker_color=_clr_p,
-                            hovertemplate=f"{_prod} — H%{{x}} : <b>%{{y:.2f}} €/MWh</b><extra></extra>",
+                            hovertemplate=f"{_prod}  -  H%{{x}} : <b>%{{y:.2f}} €/MWh</b><extra></extra>",
                         ))
                     _fig_bas_p.update_layout(
                         height=260, barmode="group", margin=dict(t=10, b=40, l=60, r=10),
@@ -3650,14 +3682,14 @@ with tab_intra:
                     apply_bb(_fig_bas_p)
                     _moy_prod = _bas_prod.groupby(level=0)['spread'].mean()
                     st.caption(
-                        "Spread moyen — " + " · ".join(
+                        "Spread moyen  -  " + " · ".join(
                             f"**{p}** : {v:.2f} €/MWh" for p, v in _moy_prod.items()
                         )
                     )
                     st.plotly_chart(_fig_bas_p, width="stretch", config=PLOTLY_CFG, key="intra_bas_product")
             else:
                 st.info(
-                    "Spread bid/ask non disponible — nécessite des fichiers **Continuous_Trades** "
+                    "Spread bid/ask non disponible  -  nécessite des fichiers **Continuous_Trades** "
                     "(ex. `Intraday_part3.zip`, ou un export EPEX complet type `Intraday Continuous.zip`). "
                     "Uploadez-le dans la zone fichiers ci-dessus pour l'activer."
                 )
@@ -3692,7 +3724,7 @@ with tab_intra:
                     _km4.metric("Jours actifs", f"{_jours_act_i} / {_jours_tot_i}",
                                 delta=f"{_jours_act_i/_jours_tot_i*100:.0f}% taux activation")
                     _km5.metric("Énergie totale échangée",
-                                f"{_energ_i:.1f} MWh" if _energ_i else "—",
+                                f"{_energ_i:.1f} MWh" if _energ_i else " - ",
                                 delta=f"Capacité/jour : {_intra_cap:.2f} MWh")
                     _km6.metric("Jours bloqués (maintenance)", f"{_blq_i}",
                                 delta="Aucun" if _blq_i==0 else f"{_blq_i/_jours_tot_i*100:.1f}%",
@@ -3720,7 +3752,7 @@ with tab_intra:
                             y=_bas_stored['spread'].values,
                             marker_color=[C1 if v >= 0 else "#c62828"
                                           for v in _bas_stored['spread'].values],
-                            hovertemplate="H%{x} — B/A : <b>%{y:.2f} €/MWh</b><extra></extra>",
+                            hovertemplate="H%{x}  -  B/A : <b>%{y:.2f} €/MWh</b><extra></extra>",
                         ))
                         _fig_bas.update_layout(
                             height=200, margin=dict(t=5,b=40,l=60,r=10),
@@ -3730,7 +3762,7 @@ with tab_intra:
                         )
                         apply_bb(_fig_bas)
                         st.caption(
-                            "Spread bid/ask par heure — calculé sur un échantillon de ~30 jours de Continuous_Trades. "
+                            "Spread bid/ask par heure  -  calculé sur un échantillon de ~30 jours de Continuous_Trades. "
                             "Bleu = spread positif (normal). Rouge = spread négatif (acheteurs surpayent temporairement). "
                             f"Échantillon basé sur {len(_bas_stored)} heures."
                         )
@@ -3738,7 +3770,7 @@ with tab_intra:
                                         key=f"intra_bas_{_mname}")
 
                     # ── PnL annuel borne max vs réel ──────────────────────────
-                    st.markdown('<p class="section">PnL annuel — borne max vs réel</p>', unsafe_allow_html=True)
+                    st.markdown('<p class="section">PnL annuel  -  borne max vs réel</p>', unsafe_allow_html=True)
                     st.caption("Barres jaunes = borne max théorique. Barres colorées = PnL réel avec contraintes. L'écart = coût des restrictions et du quota.")
                     _fig1_m = go.Figure()
                     _fig1_m.add_trace(go.Bar(
@@ -3768,7 +3800,7 @@ with tab_intra:
                     # ── Graphiques 2×2 ────────────────────────────────────────
                     _tg1, _tg2 = st.columns(2)
                     with _tg1:
-                        st.markdown('<p class="section">Spread moyen — par semaine (€/MWh)</p>', unsafe_allow_html=True)
+                        st.markdown('<p class="section">Spread moyen  -  par semaine (€/MWh)</p>', unsafe_allow_html=True)
                         st.caption("Évolution du spread moyenné par semaine, pour lisser le bruit jour-à-jour. Zone ombrée = fourchette min-max observée cette semaine-là (plus elle est large, plus le marché a été volatil). Ligne pointillée = spread moyen sur toute la période, pour situer chaque semaine par rapport à la tendance générale.")
                         _dv_i = _daily_i[_daily_i["valid"]].copy()
                         if not _dv_i.empty:
@@ -3856,7 +3888,7 @@ with tab_intra:
 
                     with _tg4:
                         st.markdown('<p class="section">PnL cumulé dans le temps</p>', unsafe_allow_html=True)
-                        st.caption("PnL cumulé = somme des gains au fil du temps (la pente indique le rythme de gain — plus elle est forte, plus la période a été rentable). Borne max = potentiel théorique avec prévision parfaite des prix et sans restriction horaire ni quota.")
+                        st.caption("PnL cumulé = somme des gains au fil du temps (la pente indique le rythme de gain  -  plus elle est forte, plus la période a été rentable). Borne max = potentiel théorique avec prévision parfaite des prix et sans restriction horaire ni quota.")
                         _ds = _daily_i.sort_values("date").copy()
                         _ds["pnl_cum"] = _ds["pnl"].cumsum()
                         _ds["abs_cum"] = _ds["pnl_absolu"].cumsum() if "pnl_absolu" in _ds.columns else _ds["pnl_cum"]
@@ -3960,7 +3992,7 @@ with tab_intra:
                                         x=list(range(24)),
                                         y=[float(p) if not pd.isna(p) else 0 for p in _prix_m],
                                         marker_color="#c8d8ec",name="Prix intraday",
-                                        hovertemplate="H%{x:02d} — <b>%{y:.2f} €/MWh</b><extra></extra>",
+                                        hovertemplate="H%{x:02d}  -  <b>%{y:.2f} €/MWh</b><extra></extra>",
                                     ))
                                     _col_ch=["#2e7d32","#1565c0","#6a1b9a"]
                                     _col_dch=["#c62828","#e65100","#4527a0"]
@@ -3971,14 +4003,14 @@ with tab_intra:
                                             mode="markers",name=f"Achat C{_ii+1} ({_intra_dur}h)",
                                             marker=dict(color=_cc2,size=16,symbol="triangle-up",
                                                         line=dict(color="white",width=1)),
-                                            hovertemplate=f"H%{{x:02d}} — Achat C{_ii+1} : <b>%{{y:.2f}} €/MWh</b><extra></extra>",
+                                            hovertemplate=f"H%{{x:02d}}  -  Achat C{_ii+1} : <b>%{{y:.2f}} €/MWh</b><extra></extra>",
                                         ))
                                         _fig_ex.add_trace(go.Scatter(
                                             x=_cy["h_decharge"],y=_prix_m[_cy["h_decharge"]],
                                             mode="markers",name=f"Vente C{_ii+1} ({_intra_dur}h)",
                                             marker=dict(color=_cd2,size=16,symbol="triangle-down",
                                                         line=dict(color="white",width=1)),
-                                            hovertemplate=f"H%{{x:02d}} — Vente C{_ii+1} : <b>%{{y:.2f}} €/MWh</b><extra></extra>",
+                                            hovertemplate=f"H%{{x:02d}}  -  Vente C{_ii+1} : <b>%{{y:.2f}} €/MWh</b><extra></extra>",
                                         ))
                                         _fig_ex.add_shape(type="line",x0=-0.5,x1=23.5,
                                             y0=_cy["prix_charge"],y1=_cy["prix_charge"],
@@ -4008,18 +4040,18 @@ with tab_intra:
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# ONGLET — IMBALANCE MARKET (marché des écarts)
+# ONGLET  -  IMBALANCE MARKET (marché des écarts)
 # ══════════════════════════════════════════════════════════════════════════════
 
 with tab_imbalance:
     _diag_set_tab("imbalance")
-    st.markdown('<p class="section">Imbalance Market — Valorisation des écarts</p>', unsafe_allow_html=True)
+    st.markdown('<p class="section">Imbalance Market  -  Valorisation des écarts</p>', unsafe_allow_html=True)
     st.caption(
         "Le prix de règlement des écarts (imbalance settlement price) est le prix auquel un acteur du marché "
         "paie ou est rémunéré pour l'écart entre sa production/consommation réelle et son programme prévisionnel. "
-        "Il y a deux prix : **négatif** (s'applique à un acteur en écart négatif — il a manqué d'énergie) et "
-        "**positif** (s'applique à un acteur en écart positif — il a eu un surplus). "
-        "Une batterie peut valoriser cet écart en chargeant/déchargeant aux heures les plus favorables — "
+        "Il y a deux prix : **négatif** (s'applique à un acteur en écart négatif  -  il a manqué d'énergie) et "
+        "**positif** (s'applique à un acteur en écart positif  -  il a eu un surplus). "
+        "Une batterie peut valoriser cet écart en chargeant/déchargeant aux heures les plus favorables  -  "
         "on simule ici cette stratégie séparément sur chacune des deux séries de prix, pour comparer leur potentiel. "
         "Cette simulation suppose un accès direct à la série de prix choisie ; elle ne modélise pas la mécanique "
         "réglementaire complète d'un Responsable d'Équilibre (BRP)."
@@ -4032,7 +4064,7 @@ with tab_imbalance:
         _imb_n_cyc = st.selectbox(
             "Cycles par jour", [1, 2, 0],
             format_func=lambda x: {1: "1 cycle / jour", 2: "2 cycles / jour",
-                                    0: "Illimité — tous les cycles rentables du jour"}[x],
+                                    0: "Illimité  -  tous les cycles rentables du jour"}[x],
             index=0, key="imb_n_cyc",
         )
     with _ib2:
@@ -4122,6 +4154,7 @@ with tab_imbalance:
             if not _imb_markets:
                 st.error("Aucune colonne de prix reconnue dans le fichier. Vérifiez qu'il contient une colonne Date et une colonne negative/positive_imbalance_settlement_price.")
             st.session_state["_imb_markets"] = _imb_markets
+            st.session_state["_imb_run"] = False
 
         _imb_markets = st.session_state.get("_imb_markets")
         if _imb_markets:
@@ -4129,7 +4162,7 @@ with tab_imbalance:
             st.markdown('<p class="section">Comparaison Négatif / Positif</p>', unsafe_allow_html=True)
             st.caption(
                 "Chaque ligne simule la batterie comme si elle n'était exposée qu'à cette seule série de prix. "
-                "PnL/MW/an permet de comparer indépendamment de la puissance — c'est le chiffre clé pour savoir "
+                "PnL/MW/an permet de comparer indépendamment de la puissance  -  c'est le chiffre clé pour savoir "
                 "laquelle des deux séries d'écart rémunère le mieux la batterie."
             )
             _comp_rows_ib = []
@@ -4163,7 +4196,7 @@ with tab_imbalance:
                 margin=dict(t=10, b=80, l=60, r=10),
             )
             apply_bb(_fig_comp_ib)
-            st.caption("PnL par MW installé, année par année — pour repérer si l'écart entre les deux séries se creuse ou se resserre dans le temps.")
+            st.caption("PnL par MW installé, année par année  -  pour repérer si l'écart entre les deux séries se creuse ou se resserre dans le temps.")
             st.plotly_chart(_fig_comp_ib, width="stretch", config=PLOTLY_CFG, key="imb_comp_bar")
 
             # ── Détail par série ───────────────────────────────────────────────
@@ -4190,13 +4223,13 @@ with tab_imbalance:
                     _ikm2.metric("PnL borne théorique max", f"{_fmt(_pnl_abs_ib)} €", delta=f"{_taux_ib*100:.1f}% capturé")
                     _ikm3.metric("Spread moyen (jours actifs)", f"{_spr_moy_ib:.1f} €/MWh", delta=f"Théorique: {_spr_abs_ib:.1f} €/MWh")
                     _ikm4.metric("Jours actifs", f"{_jact_ib} / {_jtot_ib}", delta=f"{_jact_ib/_jtot_ib*100:.0f}% taux activation" if _jtot_ib else None)
-                    _ikm5.metric("Énergie totale échangée", f"{_energ_ib:.1f} MWh" if _energ_ib else "—",
+                    _ikm5.metric("Énergie totale échangée", f"{_energ_ib:.1f} MWh" if _energ_ib else " - ",
                                  delta=f"Capacité/jour : {_imb_cap:.2f} MWh")
                     _ikm6.metric("Jours bloqués (maintenance)", f"{_blq_ib}",
                                  delta="Aucun" if _blq_ib == 0 else f"{_blq_ib/_jtot_ib*100:.1f}%",
                                  delta_color="off" if _blq_ib == 0 else "inverse")
 
-                    st.markdown('<p class="section">PnL annuel — borne max vs réel</p>', unsafe_allow_html=True)
+                    st.markdown('<p class="section">PnL annuel  -  borne max vs réel</p>', unsafe_allow_html=True)
                     st.caption("Barres jaunes = borne max théorique. Barres colorées = PnL réel avec contraintes. L'écart = coût des restrictions et du quota.")
                     _fig1_ib = go.Figure()
                     _fig1_ib.add_trace(go.Bar(
@@ -4221,7 +4254,7 @@ with tab_imbalance:
 
                     _tgib1, _tgib2 = st.columns(2)
                     with _tgib1:
-                        st.markdown('<p class="section">Spread moyen — par semaine (€/MWh)</p>', unsafe_allow_html=True)
+                        st.markdown('<p class="section">Spread moyen  -  par semaine (€/MWh)</p>', unsafe_allow_html=True)
                         st.caption("Évolution du spread moyenné par semaine. Zone ombrée = fourchette min-max observée. Ligne pointillée = spread moyen sur toute la période.")
                         _dv_ib = _daily_ib[_daily_ib["valid"]].copy()
                         if not _dv_ib.empty:
@@ -4335,7 +4368,7 @@ with tab_imbalance:
                                         x=list(range(24)),
                                         y=[float(p) if not pd.isna(p) else 0 for p in _prix_ib],
                                         marker_color="#c8d8ec", name="Prix d'écart",
-                                        hovertemplate="H%{x:02d} — <b>%{y:.2f} €/MWh</b><extra></extra>",
+                                        hovertemplate="H%{x:02d}  -  <b>%{y:.2f} €/MWh</b><extra></extra>",
                                     ))
                                     _col_ch_ib = ["#2e7d32", "#1565c0", "#6a1b9a"]
                                     _col_dch_ib = ["#c62828", "#e65100", "#4527a0"]
@@ -4345,13 +4378,13 @@ with tab_imbalance:
                                             x=_cy_ib["h_charge"], y=_prix_ib[_cy_ib["h_charge"]],
                                             mode="markers", name=f"Achat C{_ii_ib+1} ({_imb_dur}h)",
                                             marker=dict(color=_ccib2, size=16, symbol="triangle-up", line=dict(color="white", width=1)),
-                                            hovertemplate=f"H%{{x:02d}} — Achat C{_ii_ib+1} : <b>%{{y:.2f}} €/MWh</b><extra></extra>",
+                                            hovertemplate=f"H%{{x:02d}}  -  Achat C{_ii_ib+1} : <b>%{{y:.2f}} €/MWh</b><extra></extra>",
                                         ))
                                         _fig_exib.add_trace(go.Scatter(
                                             x=_cy_ib["h_decharge"], y=_prix_ib[_cy_ib["h_decharge"]],
                                             mode="markers", name=f"Vente C{_ii_ib+1} ({_imb_dur}h)",
                                             marker=dict(color=_cdib2, size=16, symbol="triangle-down", line=dict(color="white", width=1)),
-                                            hovertemplate=f"H%{{x:02d}} — Vente C{_ii_ib+1} : <b>%{{y:.2f}} €/MWh</b><extra></extra>",
+                                            hovertemplate=f"H%{{x:02d}}  -  Vente C{_ii_ib+1} : <b>%{{y:.2f}} €/MWh</b><extra></extra>",
                                         ))
                                     _fig_exib.update_layout(
                                         height=380, margin=dict(t=20, b=60, l=60, r=10),
@@ -4367,7 +4400,7 @@ with tab_imbalance:
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# ONGLET 2 — LISSAGE DE COURBE DE CHARGE
+# ONGLET 2  -  LISSAGE DE COURBE DE CHARGE
 # ══════════════════════════════════════════════════════════════════════════════
 
 with tab_lis:
@@ -4395,12 +4428,12 @@ with tab_lis:
             )
             _tc1, _tc2 = st.columns(2)
             with _tc1:
-                _t_hd  = st.number_input("HD — Heures de Pointe (€/MWh)",  0.0, 500.0, 140.0, 5.0, key="t_hd")
-                _t_hph = st.number_input("HPH — Heures Pleines Hiver (€/MWh)", 0.0, 300.0, 75.0, 5.0, key="t_hph")
-                _t_hch = st.number_input("HCH — Heures Creuses Hiver (€/MWh)", 0.0, 200.0, 42.0, 5.0, key="t_hch")
+                _t_hd  = st.number_input("HD  -  Heures de Pointe (€/MWh)",  0.0, 500.0, 140.0, 5.0, key="t_hd")
+                _t_hph = st.number_input("HPH  -  Heures Pleines Hiver (€/MWh)", 0.0, 300.0, 75.0, 5.0, key="t_hph")
+                _t_hch = st.number_input("HCH  -  Heures Creuses Hiver (€/MWh)", 0.0, 200.0, 42.0, 5.0, key="t_hch")
             with _tc2:
-                _t_hpe = st.number_input("HPE — Heures Pleines Été (€/MWh)", 0.0, 200.0, 52.0, 5.0, key="t_hpe")
-                _t_hce = st.number_input("HCE — Heures Creuses Été (€/MWh)", 0.0, 150.0, 30.0, 5.0, key="t_hce")
+                _t_hpe = st.number_input("HPE  -  Heures Pleines Été (€/MWh)", 0.0, 200.0, 52.0, 5.0, key="t_hpe")
+                _t_hce = st.number_input("HCE  -  Heures Creuses Été (€/MWh)", 0.0, 150.0, 30.0, 5.0, key="t_hce")
             st.caption("Sources : TURPE 6 HTA option LU (CRE 2024). HD = ~500h/an en hiver.")
 
         # Mapping heure → tranche TURPE
@@ -4479,7 +4512,7 @@ with tab_lis:
 
             with col_up:
                 st.success(
-                    f"**{uploaded_cdc.name}** chargé — "
+                    f"**{uploaded_cdc.name}** chargé  -  "
                     f"{n_jours} jours | {_fmt(conso_tot)} MWh total | "
                     f"Pointe : {pointe:.3f} MW"
                 )
@@ -4492,7 +4525,7 @@ with tab_lis:
     # Saisie manuelle ou fallback
     if source_profil == "Saisie manuelle" or profil_arr is None:
         if uploaded_cdc is None and source_profil == "Fichier uploadé":
-            st.info("Aucun fichier chargé — saisie manuelle activée.")
+            st.info("Aucun fichier chargé  -  saisie manuelle activée.")
         with col_up:
             st.caption("Consommation en MW pour chaque heure H00–H23 :")
             cols8 = st.columns(8)
@@ -4515,7 +4548,7 @@ with tab_lis:
     _duree_equiv = round(energy_MWh / power_MW, 2) if power_MW > 0 else 0
     st.info(
         f"Capacité calculée automatiquement : **{energy_MWh:.2f} MWh** "
-        f"({_duree_equiv}h équivalent à {power_MW} MW) — "
+        f"({_duree_equiv}h équivalent à {power_MW} MW)  -  "
         f"Seuil : {_seuil_MW:.3f} MW (P{seuil_pct})"
     )
 
@@ -4612,7 +4645,7 @@ with tab_lis:
             fig_ts.update_layout(
                 height=360,
                 margin=dict(t=30, b=100, l=60, r=10),
-                title=dict(text="Courbe de charge — 30 derniers jours",
+                title=dict(text="Courbe de charge  -  30 derniers jours",
                            font=dict(size=13), x=0),
                 xaxis=dict(title="", tickformat="%d/%m",
                            tickangle=-30),
@@ -4638,7 +4671,7 @@ with tab_lis:
     @st.cache_data(show_spinner=False)
     def _simulate_lissage_cached(_file_bytes, _cdc_bytes, _profil_tuple, _params_json):
         """Boucle jour par jour mise en cache par (fichier spot, courbe de charge,
-        profil, paramètres) — change uniquement le tarif ou le SOC initial ne
+        profil, paramètres)  -  change uniquement le tarif ou le SOC initial ne
         re-déclenche pas le recalcul complet si déjà fait avec ces valeurs."""
         import json as _j_lis
         _params = _j_lis.loads(_params_json)
@@ -4694,7 +4727,7 @@ with tab_lis:
     }
 
     # ── Sélection du jour à afficher ────────────────────────────────────────
-    st.markdown('<p class="section">Profil de consommation — avant et après lissage</p>',
+    st.markdown('<p class="section">Profil de consommation  -  avant et après lissage</p>',
                 unsafe_allow_html=True)
 
     # Construire la liste des jours disponibles
@@ -4750,13 +4783,13 @@ with tab_lis:
 
             with _col_info:
                 st.caption(
-                    f"**{str(_date_sel)}** — "
+                    f"**{str(_date_sel)}**  -  "
                     f"Pointe réelle : **{jour['pointe_avant']:.3f} MW** → après lissage : **{jour['pointe_apres']:.3f} MW** "
                     f"| Réduction : **{jour['reduction_pointe']:.3f} MW** "
                     f"({jour['reduction_pointe']/jour['pointe_avant']*100:.1f}%)"
                 )
         else:
-            st.warning(f"Jour {str(_date_sel)} incomplet ({len(_jour_data)} heures < 24) — affichage du jour moyen.")
+            st.warning(f"Jour {str(_date_sel)} incomplet ({len(_jour_data)} heures < 24)  -  affichage du jour moyen.")
     else:
         st.info("Uploadez un fichier CdC pour sélectionner un jour réel. Affichage du jour moyen par défaut.")
 
@@ -4778,14 +4811,14 @@ with tab_lis:
         x=list(range(24)), y=profil_arr.tolist(),
         mode="lines+markers", name="Avant lissage",
         line=dict(color="#e91e8c", width=3), marker=dict(size=7, color="#e91e8c"),
-        hovertemplate="H%{x:02d} — Avant : <b>%{y:.3f} MW</b><extra></extra>",
+        hovertemplate="H%{x:02d}  -  Avant : <b>%{y:.3f} MW</b><extra></extra>",
     ), row=1, col=1)
     fig_l.add_trace(go.Scatter(
         x=list(range(24)), y=jour["profil_lisse"].tolist(),
         mode="lines+markers", name="Après lissage",
         line=dict(color=C1, width=2.5),
         fill="tozeroy", fillcolor=("rgba(255,102,0,0.08)" if _BB else "rgba(92,184,92,0.07)"), marker=dict(size=6),
-        hovertemplate="H%{x:02d} — Après : <b>%{y:.3f} MW</b><extra></extra>",
+        hovertemplate="H%{x:02d}  -  Après : <b>%{y:.3f} MW</b><extra></extra>",
     ), row=1, col=1)
     fig_l.add_hline(y=res["seuil_MW"], line_dash="dash", line_color=GREEN,
                     line_width=2, annotation_text=f"Seuil {res['seuil_MW']:.2f} MW",
@@ -4794,7 +4827,7 @@ with tab_lis:
     fig_l.add_trace(go.Bar(
         x=list(range(24)), y=actions_bess,
         marker_color=colors_bar, name="BESS",
-        hovertemplate="H%{x:02d} — BESS : <b>%{y:.3f} MW</b>"
+        hovertemplate="H%{x:02d}  -  BESS : <b>%{y:.3f} MW</b>"
                       " (%{customdata})<extra></extra>",
         customdata=[a for a, v in jour["actions"]],
     ), row=2, col=1)
@@ -4827,7 +4860,7 @@ with tab_lis:
 
     st.caption(
         "**Pourquoi la batterie se charge plus qu'elle ne décharge sur ce graphique ?** "
-        "Sur un jour moyen, la consommation est souvent régulière — il y a peu de pics à effacer. "
+        "Sur un jour moyen, la consommation est souvent régulière  -  il y a peu de pics à effacer. "
         "La batterie se recharge beaucoup (barres vertes) mais décharge peu car le seuil est rarement dépassé. "
         "Sur les jours réels avec de vrais pics, le déséquilibre est inversé : "
         "la batterie décharge massivement pour écrêter. "
@@ -4848,7 +4881,7 @@ with tab_lis:
             line=dict(color=C1, width=2),
             fill="tozeroy", fillcolor=("rgba(255,102,0,0.10)" if _BB else "rgba(92,184,92,0.12)"),
             marker=dict(size=6),
-            hovertemplate="Après H%{x:02d} — SOC : <b>%{y:.3f} MWh</b><extra></extra>",
+            hovertemplate="Après H%{x:02d}  -  SOC : <b>%{y:.3f} MWh</b><extra></extra>",
         ))
         fig_soc.add_hline(y=energy_MWh * 0.9, line_dash="dash",
                           line_color=GREEN, annotation_text=f"SOC max ({energy_MWh*0.9:.1f} MWh)")
@@ -5042,24 +5075,24 @@ with tab_lis:
             mime="text/csv"
         )
 # ══════════════════════════════════════════════════════════════════════════════
-# ONGLET 3 — VÉRIFICATION ARBITRAGE
+# ONGLET 3  -  VÉRIFICATION ARBITRAGE
 # ══════════════════════════════════════════════════════════════════════════════
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# ONGLET 3 — AUDIT ARBITRAGE : drill-down sur chaque valeur
+# ONGLET 3  -  AUDIT ARBITRAGE : drill-down sur chaque valeur
 # ══════════════════════════════════════════════════════════════════════════════
 
 
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# ONGLET 3 — COMPARAISON MULTI-SCÉNARIOS
+# ONGLET 3  -  COMPARAISON MULTI-SCÉNARIOS
 # ══════════════════════════════════════════════════════════════════════════════
 
 with tab_comp:
     _diag_set_tab("comp")
-    st.markdown('<p class="section">Comparaison de scénarios — jusqu\'à 4 configurations simultanées</p>',
+    st.markdown('<p class="section">Comparaison de scénarios  -  jusqu\'à 4 configurations simultanées</p>',
                 unsafe_allow_html=True)
     st.caption("Définissez plusieurs scénarios et comparez leurs résultats côte à côte.")
 
@@ -5098,22 +5131,22 @@ with tab_comp:
     with preset_col1:
         if st.button("Charger les 4 cas standards (1h/2h · Top-365 / Illimité)", key="btn_preset_4cas"):
             st.session_state.scenarios = [
-                # Cas 1 — 1h charge+décharge, top 365 meilleurs spreads de l'année
+                # Cas 1  -  1h charge+décharge, top 365 meilleurs spreads de l'année
                 {"name": "1h · Top 365 spreads/an", "power_MW": power_MW,
                  "n_cycles": 0, "duration_h": 1, "efficiency": efficiency,
                  "max_cycles_year": 365, "excluded_hours": {},
                  "optimal_quota": True},
-                # Cas 2 — 1h charge+décharge, illimité
+                # Cas 2  -  1h charge+décharge, illimité
                 {"name": "1h · Illimité", "power_MW": power_MW,
                  "n_cycles": 0, "duration_h": 1, "efficiency": efficiency,
                  "max_cycles_year": None, "excluded_hours": {},
                  "optimal_quota": False},
-                # Cas 3 — 2h charge+décharge, top 365 meilleurs spreads de l'année
+                # Cas 3  -  2h charge+décharge, top 365 meilleurs spreads de l'année
                 {"name": "2h · Top 365 spreads/an", "power_MW": power_MW,
                  "n_cycles": 0, "duration_h": 2, "efficiency": efficiency,
                  "max_cycles_year": 365, "excluded_hours": {},
                  "optimal_quota": True},
-                # Cas 4 — 2h charge+décharge, illimité
+                # Cas 4  -  2h charge+décharge, illimité
                 {"name": "2h · Illimité", "power_MW": power_MW,
                  "n_cycles": 0, "duration_h": 2, "efficiency": efficiency,
                  "max_cycles_year": None, "excluded_hours": {},
@@ -5156,7 +5189,7 @@ with tab_comp:
     with sc6:
         pass
 
-    # top-N meilleurs spreads toujours activé par défaut — pas de choix exposé
+    # top-N meilleurs spreads toujours activé par défaut  -  pas de choix exposé
     sc_ncyc   = 0       # mode MAX : le moteur trouve tous les cycles rentables
     sc_optimal = True   # on prend toujours les N meilleurs spreads
 
@@ -5186,7 +5219,7 @@ with tab_comp:
     with col_btn2:
         clear_btn = st.button("Effacer tout", key="btn_clear_sc")
 
-    # Ajout — flag pour éviter double exécution au rerun
+    # Ajout  -  flag pour éviter double exécution au rerun
     if add_btn and not st.session_state.sc_just_added:
         if len(st.session_state.scenarios) < 4:
             st.session_state.scenarios.append({
@@ -5293,6 +5326,7 @@ with tab_comp:
             # Sauvegarder pour l'assistant IA et pour l'affichage
             st.session_state["_ai_sc_results"] = results
             st.session_state["_sc_results_cache"] = results
+            st.session_state["_sc_run_requested"] = False
 
         results = st.session_state.get("_sc_results_cache")
         if results is None:
@@ -5327,7 +5361,7 @@ with tab_comp:
             st.caption(
               "Comparaison des scénarios sur 4 ans. "
               "**PnL** = revenus nets réalisés. "
-              "Pour le mode Illimité : PnL = Potentiel max car aucun quota ne bloque les trades — les deux colonnes sont identiques, c'est normal. "
+              "Pour le mode Illimité : PnL = Potentiel max car aucun quota ne bloque les trades  -  les deux colonnes sont identiques, c'est normal. "
               "**Potentiel max** = maximum théorique sans aucune contrainte = le PnL du mode Illimité, "
               "affiché pour mesurer ce que le quota 365 vous coûte. "
               "**Spread moy.** = écart moyen prix vente − prix achat (€/MWh). "
@@ -5472,12 +5506,12 @@ with tab_comp:
                                        simulate_arbitrage_optimal as _sao,
                                        aggregate_arbitrage as _aa)
               _n_sc_hist = len(results)
-              _prog_bar = st.progress(0, text="Simulation historique 2019–2025 — initialisation…")
+              _prog_bar = st.progress(0, text="Simulation historique 2019–2025  -  initialisation…")
               for _i_sc, r in enumerate(results):
                   sc = r["sc"]
                   _prog_bar.progress(
                       int(_i_sc / _n_sc_hist * 100),
-                      text=f"Simulation historique — scénario {_i_sc+1}/{_n_sc_hist} : {sc['name']}…"
+                      text=f"Simulation historique  -  scénario {_i_sc+1}/{_n_sc_hist} : {sc['name']}…"
                   )
                   _p = {"power_MW": sc["power_MW"], "n_cycles": sc["n_cycles"],
                         "duration_h": sc["duration_h"], "efficiency": sc["efficiency"],
@@ -5507,7 +5541,7 @@ with tab_comp:
                       "Potentiel max (€)": _fmt(_yh["pnl_absolu_total"].sum()),
                       "Spread moy (€/MWh)": f"{_yh['spread_moy'].mean():.1f}",
                       "Jours actifs": str(int(_yh["jours_actifs"].sum())),
-                      "Taux activation": "—",
+                      "Taux activation": " - ",
                   })
               _prog_bar.progress(100, text="Simulation historique terminée.")
               _prog_bar.empty()
@@ -5520,7 +5554,7 @@ with tab_comp:
               )
 
               # Graphique unifié 2019-2029 (historique + projection sur un seul graphique)
-              st.markdown('<p class="section">PnL comparatif 2019–2029 — Historique réel + Projection</p>', unsafe_allow_html=True)
+              st.markdown('<p class="section">PnL comparatif 2019–2029  -  Historique réel + Projection</p>', unsafe_allow_html=True)
               st.caption("Données réelles 2019–2025 (feuille Case 3) + projections 2026–2029 sur un seul graphique.")
               # Construire les données combinées 2019-2029 par scénario
               # Graphique PnL comparatif 2019-2029
@@ -5555,14 +5589,14 @@ with tab_comp:
                   _y_proj = [_yf_dict[a]  for a in _all_annees_sorted if a in _yf_dict]
 
                   _fig_uni.add_trace(go.Bar(
-                      name=f"{_sc_name} — Réel",
+                      name=f"{_sc_name}  -  Réel",
                       x=_x_reel, y=_y_reel,
                       marker_color=_clr, opacity=0.9,
                       legendgroup=f"sc{_i}",
                       hovertemplate="<b>" + _sc_name + " (réel)</b><br>%{x} : %{y:,.0f} €<extra></extra>",
                   ))
                   _fig_uni.add_trace(go.Bar(
-                      name=f"{_sc_name} — Projection",
+                      name=f"{_sc_name}  -  Projection",
                       x=_x_proj, y=_y_proj,
                       marker_color=_clr,
                       marker_opacity=0.45,
@@ -5603,7 +5637,7 @@ with tab_comp:
 
               # ── Volet déroulant : liste des spreads par scénario, 2019-2029 ──
               # On fusionne données historiques (_hist_results) + projections (results)
-              with st.expander("Liste des cycles classés par spread — détail par scénario et par année (2019–2029)", expanded=False):
+              with st.expander("Liste des cycles classés par spread  -  détail par scénario et par année (2019–2029)", expanded=False):
                   st.caption(
                       "Pour chaque scénario et chaque année (2019–2025 historique + 2026–2029 projection), "
                       "tous les cycles retenus classés du meilleur spread au plus faible. "
@@ -5646,14 +5680,14 @@ with tab_comp:
                                   _df_sp2.index = _df_sp2.index + 1
                                   if _max_cy2:
                                       st.caption(
-                                          f"**{len(_df_sp2)} cycles retenus** — {int(_ann2)} "
+                                          f"**{len(_df_sp2)} cycles retenus**  -  {int(_ann2)} "
                                           f"(quota = {_max_cy2}) · "
                                           f"Spread max : **{_df_sp2['Spread (€/MWh)'].max():.1f} €/MWh** · "
                                           f"Spread min retenu : **{_df_sp2['Spread (€/MWh)'].min():.1f} €/MWh**"
                                       )
                                   else:
                                       st.caption(
-                                          f"**{len(_df_sp2)} cycles** — {int(_ann2)} (illimité) · "
+                                          f"**{len(_df_sp2)} cycles**  -  {int(_ann2)} (illimité) · "
                                           f"Spread max : **{_df_sp2['Spread (€/MWh)'].max():.1f} €/MWh** · "
                                           f"Spread min : **{_df_sp2['Spread (€/MWh)'].min():.1f} €/MWh**"
                                       )
@@ -5667,7 +5701,7 @@ with tab_comp:
             except Exception as _e_hist:
               import traceback as _tb
               _tb_str = _tb.format_exc()
-              st.error(f"🔴 ERREUR HISTORIQUE v2.2 — {type(_e_hist).__name__}: {_e_hist}")
+              st.error(f"🔴 ERREUR HISTORIQUE v2.2  -  {type(_e_hist).__name__}: {_e_hist}")
               with st.expander("Traceback complet"):
                   st.code(_tb_str)
 
@@ -5740,12 +5774,12 @@ with tab_comp:
                       story.append(Paragraph(
                           "<i>Durée cycle : durée d'une charge + durée d'une décharge (ex. 2h = 2h d'achat puis 2h de revente). "
                           "Capacité : énergie stockable en MWh (Puissance × Durée). "
-                          "Quota : nombre max de cycles autorisés par an — 365 = on garde les 365 meilleurs spreads, Illimité = tous les cycles rentables.</i>",
+                          "Quota : nombre max de cycles autorisés par an  -  365 = on garde les 365 meilleurs spreads, Illimité = tous les cycles rentables.</i>",
                           s_small))
                       story.append(Spacer(1, 8))
 
                       # ── Résultats 2026-2029 ───────────────────────────────────────────
-                      story.append(Paragraph("Résultats comparatifs — Projections 2026–2029", s_h2))
+                      story.append(Paragraph("Résultats comparatifs  -  Projections 2026–2029", s_h2))
                       _r_data = [["Scénario","Année","PnL réel (€)","PnL borne max (€)","Spread moy. (€/MWh)","Jours actifs","Taux activ."]]
                       for r in results:
                           for _, yr in r["yearly"].iterrows():
@@ -5756,7 +5790,7 @@ with tab_comp:
                           _r_data.append([f"TOTAL {r['sc']['name']}", "2026-29",
                                           _fmt(r["yearly"]["pnl_total"].sum()),
                                           _fmt(r["yearly"]["pnl_absolu_total"].sum()),
-                                          f"{r['yearly']['spread_moy'].mean():.1f}","—","—"])
+                                          f"{r['yearly']['spread_moy'].mean():.1f}"," - "," - "])
                       _r_tbl = Table(_r_data, repeatRows=1,
                           colWidths=[4.8*cm, 1.4*cm, 2.4*cm, 2.4*cm, 2.4*cm, 1.8*cm, 2.0*cm])
                       _r_tbl.setStyle(TableStyle([
@@ -5772,17 +5806,17 @@ with tab_comp:
                       story.append(_r_tbl)
                       story.append(Paragraph(
                           "<i>PnL réel : revenus nets avec toutes vos contraintes (quota, heures exclues). "
-                          "PnL borne max : maximum théorique sans aucune contrainte — mesure le potentiel du marché. "
+                          "PnL borne max : maximum théorique sans aucune contrainte  -  mesure le potentiel du marché. "
                           "Spread moy. : différence moyenne entre prix de revente et prix d'achat sur les cycles réalisés (€/MWh). "
                           "Jours actifs : jours où la batterie a effectivement tradé. "
-                          "Taux activ. : % de jours tradés — inférieur à 100% si le quota annuel est atteint avant fin d'année.</i>",
+                          "Taux activ. : % de jours tradés  -  inférieur à 100% si le quota annuel est atteint avant fin d'année.</i>",
                           s_small))
                       story.append(Spacer(1, 8))
 
                       # ── Résultats historiques 2019-2025 ──────────────────────────────
                       _hr_pdf = st.session_state.get("_hist_results_comp", [])
                       if _hr_pdf:
-                          story.append(Paragraph("Simulation historique — Données réelles 2019–2025", s_h2))
+                          story.append(Paragraph("Simulation historique  -  Données réelles 2019–2025", s_h2))
                           _h_data = [["Scénario","Année","PnL réel (€)","PnL borne max (€)","Spread moy. (€/MWh)","Jours actifs","Taux activ."]]
                           for _rh in _hr_pdf:
                               for _, yr in _rh["yearly"].iterrows():
@@ -5793,7 +5827,7 @@ with tab_comp:
                               _h_data.append([f"TOTAL {_rh['sc']['name']}", "2019-25",
                                               _fmt(_rh["yearly"]["pnl_total"].sum()),
                                               _fmt(_rh["yearly"]["pnl_absolu_total"].sum()),
-                                              f"{_rh['yearly']['spread_moy'].mean():.1f}","—","—"])
+                                              f"{_rh['yearly']['spread_moy'].mean():.1f}"," - "," - "])
                           _h_tbl = Table(_h_data, repeatRows=1,
                               colWidths=[4.8*cm, 1.4*cm, 2.4*cm, 2.4*cm, 2.4*cm, 1.8*cm, 2.0*cm])
                           _h_tbl.setStyle(TableStyle([
@@ -5818,7 +5852,7 @@ with tab_comp:
                       from reportlab.platypus import PageBreak
                       _figs_to_export = [
                           ("PnL comparatif 2019–2029 (réel + projection)",
-                           "Vue d'ensemble historique et projections — barres pleines = données réelles, barres transparentes = projections.",
+                           "Vue d'ensemble historique et projections  -  barres pleines = données réelles, barres transparentes = projections.",
                            st.session_state.get("_comp_fig_uni"), 1600, 560),
                           ("PnL total par scénario 2026–2029",
                            "PnL annuel par scénario sur la période de projection. Permet de comparer directement la rentabilité de chaque configuration.",
@@ -5867,7 +5901,7 @@ with tab_comp:
                                   f"<b>{_fmt(abs(_diff_h))} €</b> sur données historiques réelles.", s_body))
 
                       story.append(Spacer(1, 12))
-                      story.append(Paragraph("BESS Valorisation — Plénitude B-Charge · Rapport généré automatiquement", s_small))
+                      story.append(Paragraph("BESS Valorisation  -  Plénitude B-Charge · Rapport généré automatiquement", s_small))
 
                       doc.build(story)
                       _pdf_bytes = _buf.getvalue()
@@ -5886,12 +5920,12 @@ with tab_comp:
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# ONGLET 4 — SENSIBILITÉ
+# ONGLET 4  -  SENSIBILITÉ
 # ══════════════════════════════════════════════════════════════════════════════
 
 with tab_sensi:
     _diag_set_tab("sensi")
-    st.markdown('<p class="section">Analyse de sensibilité — Heat map Puissance × Durée</p>',
+    st.markdown('<p class="section">Analyse de sensibilité  -  Heat map Puissance × Durée</p>',
                 unsafe_allow_html=True)
     st.caption(
         "Montre le PnL total sur 4 ans pour chaque combinaison de puissance installée et de durée de cycle. "
@@ -6001,7 +6035,7 @@ with tab_sensi:
                 colorbar=dict(title="PnL (€)"),
             ))
             fig_h.update_layout(
-                title=f"Durée cycle = {dur}h — PnL total 4 ans (€)",
+                title=f"Durée cycle = {dur}h  -  PnL total 4 ans (€)",
                 height=180, margin=dict(t=40, b=40, l=120, r=80),
                 plot_bgcolor="white", paper_bgcolor="white",
             )
@@ -6023,7 +6057,7 @@ with tab_sensi:
                     "Durée (h)":      dur,
                     "Capacité (MWh)": round(cap, 2),
                     "PnL total (€)":  f"{_fmt(pnl)}",
-                    "PnL/kW (€/kW)":  f"{_fmt(pnl/(pw*1000), 1)}" if pw > 0 else "—",
+                    "PnL/kW (€/kW)":  f"{_fmt(pnl/(pw*1000), 1)}" if pw > 0 else " - ",
                 })
         st.caption('Toutes les combinaisons puissance x durée, triees par PnL décroissant. La premiere ligne = configuration optimale pour vos conditions de marche.')
         st.dataframe(pd.DataFrame(sensi_rows), hide_index=True, width="stretch")
@@ -6063,7 +6097,7 @@ with tab_sensi:
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# ONGLET 5 — EXECUTIVE SUMMARY
+# ONGLET 5  -  EXECUTIVE SUMMARY
 # ══════════════════════════════════════════════════════════════════════════════
 
 
@@ -6077,7 +6111,7 @@ with tab_hist:
     with c1:
         _cyc_opts  = [1, 2, 0]
         _cyc_labels = {1: "1 cycle / jour", 2: "2 cycles / jour",
-                       0: "Illimité — tous les cycles rentables du jour"}
+                       0: "Illimité  -  tous les cycles rentables du jour"}
         n_cycles = st.selectbox(
             "Cycles par jour",
             _cyc_opts,
@@ -6227,7 +6261,7 @@ with tab_hist:
               delta_color="off" if jours_usure == 0 else "inverse")
 
     # ── Graphique 1 : PnL annuel ─────────────────────────────────────────────
-    st.markdown('<p class="section">PnL annuel — borne max vs réel</p>', unsafe_allow_html=True)
+    st.markdown('<p class="section">PnL annuel  -  borne max vs réel</p>', unsafe_allow_html=True)
     st.caption("Comparaison annuelle entre PnL réel (barres bleues) et borne max théorique (barres claires). L'ecart entre les deux mesure le coût de vos restrictions operationnelles sur les revenus.")
     hfig1 = go.Figure()
     hfig1.add_trace(go.Bar(
@@ -6261,8 +6295,8 @@ with tab_hist:
     col_a, col_b = st.columns(2)
 
     with col_a:
-        # Spread HEBDOMADAIRE — une seule courbe continue sur toute la période
-        st.markdown('<p class="section">Spread moyen — par semaine (€/MWh)</p>',
+        # Spread HEBDOMADAIRE  -  une seule courbe continue sur toute la période
+        st.markdown('<p class="section">Spread moyen  -  par semaine (€/MWh)</p>',
                     unsafe_allow_html=True)
         st.caption("Spread hebdo = différence prix vente - prix achat. Un spread élevé = opportunité rentable.")
 
@@ -6310,7 +6344,7 @@ with tab_hist:
             showlegend=False, hoverinfo="skip",
         ))
 
-        # Courbe continue — vert clair
+        # Courbe continue  -  vert clair
         hfig2.add_trace(go.Scatter(
             x=weekly_all["semaine"],
             y=weekly_all["spread_moy"],
@@ -6388,14 +6422,14 @@ with tab_hist:
         hfig3.add_trace(go.Bar(
             x=list(range(24)), y=list(h_ch.values()),
             name="Charge (achat)", marker_color=C1,
-            hovertemplate="H%{x:02d} — Charge : <b>%{y} jours</b>"
+            hovertemplate="H%{x:02d}  -  Charge : <b>%{y} jours</b>"
                           " (%{customdata:.1f}%)<extra></extra>",
             customdata=[v / jours_actifs * 100 for v in h_ch.values()],
         ))
         hfig3.add_trace(go.Bar(
             x=list(range(24)), y=list(h_dch.values()),
             name="Décharge (vente)", marker_color=C2,
-            hovertemplate="H%{x:02d} — Décharge : <b>%{y} jours</b>"
+            hovertemplate="H%{x:02d}  -  Décharge : <b>%{y} jours</b>"
                           " (%{customdata:.1f}%)<extra></extra>",
             customdata=[v / jours_actifs * 100 for v in h_dch.values()],
         ))
@@ -6421,7 +6455,7 @@ with tab_hist:
                     unsafe_allow_html=True)
         st.caption("Répartition des jours selon le spread journalier. Un spread de 40 euros/MWh signifie 40 euros de différence entre prix de vente et prix achat ce jour. Plus la distribution est vers la droite, plus le marché est favorable.")
         sv = daily_h.loc[daily_h["valid"], "spread"]
-        # Borner à 300 €/MWh — les valeurs extrêmes de 2022 (~2500) écraseraient le graphique
+        # Borner à 300 €/MWh  -  les valeurs extrêmes de 2022 (~2500) écraseraient le graphique
         _pmax_h = 300
         _n_outliers = int((sv > _pmax_h).sum())
         hfig4 = go.Figure()
@@ -6584,7 +6618,7 @@ with tab_hist:
                                   f"{cy['spread']:.2f} €/MWh",
                                   delta=f"{cy['spread'] - spread_jour:+.2f} vs moy")
                 else:
-                    st.metric("Spread", "— Pas de cycle")
+                    st.metric("Spread", " -  Pas de cycle")
 
                 st.metric("PnL du jour", f"{pnl_jour:.2f} €")
                 st.metric("Énergie chargée", f"{energie_jour:.3f} MWh",
@@ -6617,7 +6651,7 @@ with tab_hist:
                 fig_d.add_trace(go.Bar(
                     x=list(range(24)), y=prix_j.tolist(),
                     marker_color=bar_colors, name="Prix spot",
-                    hovertemplate="H%{x:02d} — Prix : <b>%{y:.2f} €/MWh</b><extra></extra>",
+                    hovertemplate="H%{x:02d}  -  Prix : <b>%{y:.2f} €/MWh</b><extra></extra>",
                 ))
 
                 # Couleurs par cycle
@@ -6637,7 +6671,7 @@ with tab_hist:
                         name=f"Charge {lbl} ({duration_h}h)",
                         marker=dict(color=c_ch, size=18, symbol="triangle-up",
                                     line=dict(color="white", width=1)),
-                        hovertemplate=f"H%{{x:02d}} — Charge {lbl} : <b>%{{y:.2f}} €/MWh</b><extra></extra>",
+                        hovertemplate=f"H%{{x:02d}}  -  Charge {lbl} : <b>%{{y:.2f}} €/MWh</b><extra></extra>",
                     ))
                     fig_d.add_trace(go.Scatter(
                         x=_h_dch, y=prix_j[_h_dch],
@@ -6645,7 +6679,7 @@ with tab_hist:
                         name=f"Decharge {lbl} ({duration_h}h)",
                         marker=dict(color=c_dch, size=18, symbol="triangle-down",
                                     line=dict(color="white", width=1)),
-                        hovertemplate=f"H%{{x:02d}} — Decharge {lbl} : <b>%{{y:.2f}} €/MWh</b><extra></extra>",
+                        hovertemplate=f"H%{{x:02d}}  -  Decharge {lbl} : <b>%{{y:.2f}} €/MWh</b><extra></extra>",
                     ))
                     fig_d.add_shape(type="line", x0=-0.5, x1=23.5,
                         y0=cy["prix_charge"], y1=cy["prix_charge"],
@@ -6738,7 +6772,7 @@ with tab_hist:
 
     # ── PRIORITÉ 1 : Analyse de l'impact de l'usure ──────────────────────────
     st.markdown("---")
-    st.markdown('<p class="section">Impact de l\'usure — jours bloqués et PnL manqué</p>',
+    st.markdown('<p class="section">Impact de l\'usure  -  jours bloqués et PnL manqué</p>',
                 unsafe_allow_html=True)
     st.caption(
         f"La batterie est limitée à {max_cycles or 'illimité'} cycles/an. "
@@ -6798,7 +6832,7 @@ with tab_hist:
     )
     apply_bb(fig_u1)
     if not has_quota:
-        st.caption("Quota illimité — aucun jour bloqué.")
+        st.caption("Quota illimité  -  aucun jour bloqué.")
     else:
         st.caption("Jours bloqués : quota de cycles annuel atteint. Concentrés en fin d'année.")
     st.plotly_chart(fig_u1, width="stretch", config=PLOTLY_CFG, key="h_fig_usure_jours")
@@ -6813,14 +6847,14 @@ with tab_hist:
     if has_restr:
         fig_u2.add_trace(go.Bar(
             x=grp_u["label"], y=grp_u["pnl_manque_restrictions"].round(0),
-            name="PnL manqué — restrictions horaires (€)",
+            name="PnL manqué  -  restrictions horaires (€)",
             marker_color="#f5a623",
             hovertemplate="<b>%{x}</b><br>PnL manqué restrictions : %{y:.0f} €<extra></extra>",
         ))
     if has_quota:
         fig_u2.add_trace(go.Bar(
             x=grp_u["label"], y=grp_u["pnl_manque_quota"].round(0),
-            name="PnL manqué — quota cycles (€)",
+            name="PnL manqué  -  quota cycles (€)",
             marker_color="#ef5350",
             hovertemplate="<b>%{x}</b><br>PnL manqué quota : %{y:.0f} €<extra></extra>",
         ))
@@ -6838,7 +6872,7 @@ with tab_hist:
     if has_quota:
         _cap_parts.append(f"PnL manqué quota (rouge) : {pnl_manque_quota_total:,.0f} €")
     if not has_restr and not has_quota:
-        _cap_parts.append("aucune perte détectée — quota illimité et restrictions sans impact")
+        _cap_parts.append("aucune perte détectée  -  quota illimité et restrictions sans impact")
     st.caption(" · ".join(_cap_parts))
     st.plotly_chart(fig_u2, width="stretch", config=PLOTLY_CFG, key="h_fig_usure_pnl")
 
@@ -6846,10 +6880,10 @@ with tab_hist:
     ku1, ku2, ku3, ku4 = st.columns(4)
     ku1.metric("Jours bloqués (quota)", f"{jours_usure}",
                delta=f"{jours_usure/jours_total*100:.1f}% du total" if jours_usure > 0 else "Quota illimité")
-    ku2.metric("PnL manqué — restrictions", f"{_fmt(pnl_manque_restrictions_total)} €",
-               delta=f"{pnl_manque_restrictions_total/total_pnl*100:.1f}% du PnL réel" if total_pnl > 0 else "—")
-    ku3.metric("PnL manqué — quota", f"{_fmt(pnl_manque_quota_total)} €",
-               delta=f"{pnl_manque_quota_total/total_pnl*100:.1f}% du PnL réel" if total_pnl > 0 else "—")
+    ku2.metric("PnL manqué  -  restrictions", f"{_fmt(pnl_manque_restrictions_total)} €",
+               delta=f"{pnl_manque_restrictions_total/total_pnl*100:.1f}% du PnL réel" if total_pnl > 0 else " - ")
+    ku3.metric("PnL manqué  -  quota", f"{_fmt(pnl_manque_quota_total)} €",
+               delta=f"{pnl_manque_quota_total/total_pnl*100:.1f}% du PnL réel" if total_pnl > 0 else " - ")
     if max_cycles:
         ku4.metric("Conseil quota",
                    f"Actuel : {max_cycles} → tester {min(365, max_cycles + 50)}",
@@ -6860,7 +6894,7 @@ with tab_hist:
 
     # ── PRIORITÉ 2 : Analyse ROI / Payback ───────────────────────────────────
     st.markdown("---")
-    st.markdown('<p class="section">Analyse ROI — Retour sur investissement</p>',
+    st.markdown('<p class="section">Analyse ROI  -  Retour sur investissement</p>',
                 unsafe_allow_html=True)
     st.caption(
         "Calcul de la rentabilité de l'investissement basé sur le modèle sélectionné dans la sidebar. "
@@ -6869,22 +6903,22 @@ with tab_hist:
     )
 
     # Modèle déjà sélectionné dans la sidebar via _modele_choix et power_MW
-    # CAPEX batteries LFP utility-scale 2h, France — sources multiples mai 2026
+    # CAPEX batteries LFP utility-scale 2h, France  -  sources multiples mai 2026
     # Taux USD/EUR : 0.85 (mai 2026)
     # Sources : IEA Electricity 2026, BNEF Cost Survey 2025, Ember oct. 2025, Capstone DC nov. 2025
     IEA_CAPEX = {
-        "2022 — 330 €/kWh (IEA réel)":              330,
-        "2024 — 150 €/kWh (IEA Electricity 2026)":  150,
-        "2025 — 120 €/kWh (BNEF / Ember)":          120,
-        "2026 — 105 €/kWh (Capstone DC France)":    105,
-        "2030 — 85 €/kWh  (BNEF projection)":        85,
+        "2022  -  330 €/kWh (IEA réel)":              330,
+        "2024  -  150 €/kWh (IEA Electricity 2026)":  150,
+        "2025  -  120 €/kWh (BNEF / Ember)":          120,
+        "2026  -  105 €/kWh (Capstone DC France)":    105,
+        "2030  -  85 €/kWh  (BNEF projection)":        85,
     }
     IEA_CYCLES = 6500   # LFP stationnaire 2025 : 6000-7000 cycles (BNEF/Ember)
-    IEA_DUREE  = 15     # ans — durée de vie nominale (Capstone DC, Ember)
+    IEA_DUREE  = 15     # ans  -  durée de vie nominale (Capstone DC, Ember)
 
     # Info modèle actif
     st.info(
-        f"Modèle actif : **{_modele_choix}** — {power_MW*1000:.0f} kW — {power_MW} MW  "
+        f"Modèle actif : **{_modele_choix}**  -  {power_MW*1000:.0f} kW  -  {power_MW} MW  "
         f"| Capacité : {capacite_auto:.3f} MWh  "
         f"| Rendement : {efficiency*100:.0f}%  "
         f"| Quota : {max_cycles or 'illimité'} cycles/an  "
@@ -6931,16 +6965,16 @@ with tab_hist:
                  "Typiquement 5-8% pour un projet industriel en Europe."
         ) / 100.0
 
-    with st.expander("Données de référence — batteries LFP stationnaire (sources mai 2026)", expanded=False):
+    with st.expander("Données de référence  -  batteries LFP stationnaire (sources mai 2026)", expanded=False):
         st.markdown("""
 **Sources : IEA Electricity 2026 · IEA Global Energy Review 2026 · BNEF Cost Survey 2025 · Ember oct. 2025 · Capstone DC nov. 2025**
 
 **CAPEX utility-scale 2h, France (taux USD/EUR : 0.85)**
-- **2022 : 330 €/kWh** — IEA Electricity 2026 (340 $/kWh × 0.85 + premium Europe)
-- **2024 : 150 €/kWh** — IEA Electricity 2026 (fin 2024, après baisse de 40 % sur l'année)
-- **2025 : 120 €/kWh** — BNEF Cost Survey 2025 (117 $/kWh mondial + premium Europe)
-- **2026 : 105 €/kWh** — Capstone DC France (€90–100/kWh equipment + balance of system)
-- **2030 : 85 €/kWh** — BNEF projection Europe (101 $/kWh × 0.85)
+- **2022 : 330 €/kWh**  -  IEA Electricity 2026 (340 $/kWh × 0.85 + premium Europe)
+- **2024 : 150 €/kWh**  -  IEA Electricity 2026 (fin 2024, après baisse de 40 % sur l'année)
+- **2025 : 120 €/kWh**  -  BNEF Cost Survey 2025 (117 $/kWh mondial + premium Europe)
+- **2026 : 105 €/kWh**  -  Capstone DC France (€90–100/kWh equipment + balance of system)
+- **2030 : 85 €/kWh**  -  BNEF projection Europe (101 $/kWh × 0.85)
 - **Baisse** : -58% entre 2019 et 2024 (IEA). -45% supplémentaires en 2025 (IEA Global Energy Review 2026).
 - **Projets 2h coûtent ~10-15% plus cher par kWh que projets 4h** (BNEF)
 
@@ -6951,13 +6985,13 @@ with tab_hist:
 - **Dégradation** : 2%/an garantie fabricant (Ember) | capacité résiduelle ~65% à 20 ans
 - **Durée de vie** : 15 ans nominale (Capstone DC, Ember)
 - **OPEX** : 2.5% du CAPEX/an (NREL ATB 2025) | 0 si inclus garantie constructeur
-- **Chimie dominante** : LFP — 90% des nouvelles installations de stockage stationnaire en 2025 (IEA GER 2026)
+- **Chimie dominante** : LFP  -  90% des nouvelles installations de stockage stationnaire en 2025 (IEA GER 2026)
 
 **Marché France 2025-2026**
 - Capacité installée début 2026 : ~1.5 GW (Modo Energy)
 - Pipeline RTE : ~13 GW en file d'attente
-- Revenus aFRR : effondrement de 66 €/MW/h (2024) à 16 €/MW/h (jan. 2026) — saturation
-- IRR unlevered France : 5-7% (sous le WACC de 8%) — projet standalone non bancable sans hédging (Capstone DC)
+- Revenus aFRR : effondrement de 66 €/MW/h (2024) à 16 €/MW/h (jan. 2026)  -  saturation
+- IRR unlevered France : 5-7% (sous le WACC de 8%)  -  projet standalone non bancable sans hédging (Capstone DC)
         """)
 
     # Calcul CAPEX total
@@ -7097,7 +7131,7 @@ with tab_hist:
     # Annotation CAPEX source
     fig_roi.add_annotation(
         x=0.01, y=0.02, xref="paper", yref="paper",
-        text=f"CAPEX : {capex_kwh} euros/kWh — Source IEA 2024",
+        text=f"CAPEX : {capex_kwh} euros/kWh  -  Source IEA 2024",
         showarrow=False, font=dict(size=9, color="#888"),
         xanchor="left",
     )
@@ -7115,7 +7149,7 @@ with tab_hist:
         f"Bleu = cash-flow non actualisé avec dégradation {taux_degrad*100:.0f}%/an. "
         "Pointillé = sans dégradation (optimiste). "
         f"Orange = VAN actualisée au taux {taux_actu*100:.0f}%/an. "
-        f"CAPEX retenu : {capex_kwh} €/kWh — Sources : IEA Electricity 2026, BNEF, Ember, Capstone DC (mai 2026)."
+        f"CAPEX retenu : {capex_kwh} €/kWh  -  Sources : IEA Electricity 2026, BNEF, Ember, Capstone DC (mai 2026)."
     )
     st.plotly_chart(fig_roi, width="stretch", config=PLOTLY_CFG, key="h_fig_roi_arb")
     st.caption(
@@ -7125,7 +7159,7 @@ with tab_hist:
     )
     # ── Export diagnostic complet ─────────────────────────────────────────────
     st.markdown("---")
-    st.markdown('<p class="section">Diagnostic — Exporter pour le développeur</p>',
+    st.markdown('<p class="section">Diagnostic  -  Exporter pour le développeur</p>',
                 unsafe_allow_html=True)
     st.caption("Génère un fichier HTML avec toutes les donnees et résultats visibles à l'écran.")
 
@@ -7228,7 +7262,7 @@ with tab_hist:
 
         html = f"""<!DOCTYPE html><html lang="fr"><head>
 <meta charset="UTF-8">
-<title>BESS Diagnostic — {diag["meta"]["generated_at"]}</title>
+<title>BESS Diagnostic  -  {diag["meta"]["generated_at"]}</title>
 <style>
 body{{font-family:'Segoe UI',Arial,sans-serif;background:#f8f9fb;color:#1a3a5c;margin:0;padding:20px;}}
 h1{{background:#1a3a5c;color:white;padding:12px 20px;border-radius:6px;font-size:1.2rem;margin-bottom:8px;}}
@@ -7249,7 +7283,7 @@ tr:nth-child(even) td{{background:#f0f5fb;}}
           font-size:11px;margin:16px 0 6px 0;border-radius:3px;}}
 .good{{color:#375623;font-weight:700;}} .bad{{color:#c00000;font-weight:700;}}
 </style></head><body>
-<h1> BESS Valorisation — Diagnostic complet</h1>
+<h1> BESS Valorisation  -  Diagnostic complet</h1>
 <p>Généré le <b>{diag["meta"]["generated_at"]}</b> &nbsp;|&nbsp;
    Fichier : <b>{diag["meta"]["fichier_excel"]}</b> &nbsp;|&nbsp;
    Période : <b>{" · ".join(str(a) for a in diag["meta"]["annees"])}</b> &nbsp;|&nbsp;
@@ -7278,7 +7312,7 @@ tr:nth-child(even) td{{background:#f0f5fb;}}
      "spread_absolu_moy","spread_moy","pnl_absolu_total","pnl_total",
      "pnl_par_MW","energie_totale_MWh","cycles_totaux"])}
 
-<h2>Profil horaire — fréquence charge / décharge</h2>
+<h2>Profil horaire  -  fréquence charge / décharge</h2>
 <table><tr><th>Heure</th>
 {''.join(f"<th>H{h:02d}</th>" for h in range(24))}
 </tr>
@@ -7306,7 +7340,7 @@ tr:nth-child(even) td{{background:#f0f5fb;}}
 <h2>JSON brut complet</h2>
 <pre>{json_str}</pre>
 <hr><p style="color:#888;font-size:11px;">
-BESS Valorisation v2.0 — Plénitude B-Charge — Diagnostic technique</p>
+BESS Valorisation v2.0  -  Plénitude B-Charge  -  Diagnostic technique</p>
 </body></html>"""
 
         st.download_button(
@@ -7320,7 +7354,7 @@ BESS Valorisation v2.0 — Plénitude B-Charge — Diagnostic technique</p>
 
 with tab_exec:
     _diag_set_tab("exec")
-    st.markdown('<p class="section">Executive Summary — Vue synthétique</p>',
+    st.markdown('<p class="section">Executive Summary  -  Vue synthétique</p>',
                 unsafe_allow_html=True)
     st.caption("Vue d'ensemble pour la direction. Compare automatiquement les deux strategies principales (1 cycle vs 2 cycles par jour) et presente les indicateurs clés de performance.")
 
@@ -7356,8 +7390,8 @@ with tab_exec:
 
         st.session_state["_diag_exec"] = {
             "kpis": [
-                ("PnL 4 ans — 1 cycle/jour", f"{_fmt(y_exec1['pnl_total'].sum())} €"),
-                ("PnL 4 ans — 2 cycles/jour", f"{_fmt(y_exec2['pnl_total'].sum())} €"),
+                ("PnL 4 ans  -  1 cycle/jour", f"{_fmt(y_exec1['pnl_total'].sum())} €"),
+                ("PnL 4 ans  -  2 cycles/jour", f"{_fmt(y_exec2['pnl_total'].sum())} €"),
                 ("Spread moyen", f"{y_exec1['spread_moy'].mean():.1f} €/MWh"),
                 ("Taux activation moyen", f"{y_exec1['taux_activation'].mean()*100:.0f}%"),
             ],
@@ -7368,7 +7402,7 @@ with tab_exec:
 <div style="background:{'#111' if _BB else '#1f4e79'};color:white;padding:16px 20px;
 border-radius:6px;margin-bottom:16px;">
 <div style="font-size:1.4rem;font-weight:700;letter-spacing:1px;">
-BESS VALORISATION — RÉSUMÉ EXÉCUTIF</div>
+BESS VALORISATION  -  RÉSUMÉ EXÉCUTIF</div>
 <div style="font-size:0.85rem;opacity:0.8;margin-top:4px;">
 Plénitude B-Charge · Batterie {power_MW} MW · {annees[0]}–{annees[-1]} · Rendement {efficiency*100:.0f}%
 </div>
@@ -7377,10 +7411,10 @@ Plénitude B-Charge · Batterie {power_MW} MW · {annees[0]}–{annees[-1]} · R
 
         # ── KPIs clés ─────────────────────────────────────────────────────────
         k1, k2, k3, k4 = st.columns(4)
-        k1.metric("PnL 4 ans — 1 cycle/jour",
+        k1.metric("PnL 4 ans  -  1 cycle/jour",
                   f"{_fmt(y_exec1['pnl_total'].sum())} €",
                   delta=f"Borne max : {_fmt(y_exec1['pnl_absolu_total'].sum(), 0)} €")
-        k2.metric("PnL 4 ans — 2 cycles/jour",
+        k2.metric("PnL 4 ans  -  2 cycles/jour",
                   f"{_fmt(y_exec2['pnl_total'].sum())} €",
                   delta=f"+{_fmt(y_exec2['pnl_total'].sum()-y_exec1['pnl_total'].sum(), 0)} € vs 1 cycle")
         k3.metric("Spread moyen",
@@ -7389,7 +7423,7 @@ Plénitude B-Charge · Batterie {power_MW} MW · {annees[0]}–{annees[-1]} · R
                   f"{y_exec1['taux_activation'].mean()*100:.0f}%")
 
         # ── Graphique principal : PnL annuel 1 vs 2 cycles ───────────────────
-        st.markdown('<p class="section">PnL annuel — comparaison 1 cycle vs 2 cycles/jour</p>',
+        st.markdown('<p class="section">PnL annuel  -  comparaison 1 cycle vs 2 cycles/jour</p>',
                     unsafe_allow_html=True)
         st.caption("Comparaison directe entre 1 cycle par jour (une charge et une decharge) et 2 cycles par jour (deux sequences charge-decharge successives). Deux cycles capte plus d'opportunités mais consomme plus de quota annuel.")
         fig_ex1 = go.Figure()
@@ -7438,7 +7472,7 @@ Plénitude B-Charge · Batterie {power_MW} MW · {annees[0]}–{annees[-1]} · R
         st.dataframe(pd.DataFrame(exec_rows), hide_index=True, width="stretch")
 
         # ── PnL cumulé 4 ans ─────────────────────────────────────────────────
-        st.markdown('<p class="section">Trajectoire de valorisation — PnL cumulé</p>',
+        st.markdown('<p class="section">Trajectoire de valorisation  -  PnL cumulé</p>',
                     unsafe_allow_html=True)
         st.caption("Projection du PnL cumule sur toute la période pour les deux strategies. La strategie avec la pente la plus forte est la plus rentable annuellement.")
         fig_ex2 = go.Figure()
@@ -7483,7 +7517,7 @@ La configuration optimale sur la période {annees[0]}–{annees[-1]} est
 sur 4 ans pour une batterie de <b>{power_MW} MW</b>.<br><br>
 Le spread moyen Day-Ahead sur la période est de <b>{spread_mean:.1f} €/MWh</b>.
 {"Le marché est favorable à la valorisation batterie (spread > 30 €/MWh)." if spread_mean > 30 else
- "Le marché présente un spread modéré — la valorisation reste positive."}
+ "Le marché présente un spread modéré  -  la valorisation reste positive."}
 </div>
 </div>
 """, unsafe_allow_html=True)
@@ -7505,13 +7539,13 @@ Le spread moyen Day-Ahead sur la période est de <b>{spread_mean:.1f} €/MWh</b
 with tab_verif_arb:
     _diag_set_tab("verif_arb")
     # ══════════════════════════════════════════════════════════════════════════
-    # ONGLET VÉRIFICATION ARBITRAGE — Audit complet jour par jour
+    # ONGLET VÉRIFICATION ARBITRAGE  -  Audit complet jour par jour
     # ══════════════════════════════════════════════════════════════════════════
     from itertools import combinations as _verif_comb
     import json as _verif_json
     _HCOLS_V = [f"H{h:02d}" for h in range(24)]
 
-    st.subheader("Vérification Arbitrage — Audit indépendant des calculs")
+    st.subheader("Vérification Arbitrage  -  Audit indépendant des calculs")
     st.caption(
         "Sélectionnez un jour dans le tableau pour voir la vérification complète : "
         "prix bruts Excel, heures choisies, formule PnL, 8 contrôles automatiques."
@@ -7586,7 +7620,7 @@ with tab_verif_arb:
             pc_moteur = np.mean([prices[h] for h in h_ch_moteur]) if h_ch_moteur else 0
             pd_moteur = np.mean([prices[h] for h in h_dch_moteur]) if h_dch_moteur else 0
 
-            # ── Exhaustif (force brute — toutes combinaisons) ─────────
+            # ── Exhaustif (force brute  -  toutes combinaisons) ─────────
             best_pnl_exh = 0.0
             h_ch_exh = []; h_dch_exh = []
             for hc in _verif_comb(avail, dur):
@@ -7731,14 +7765,14 @@ with tab_verif_arb:
     )
 
     _ctrl_noms = {
-        "C1_ordre"         : "C1 — Décharge après charge (contrainte physique)",
-        "C2_exclusion"     : "C2 — Aucune heure exclue utilisée",
-        "C3_spread_positif": "C3 — Spread ≥ 0 (achat < vente)",
-        "C4_optimalite"    : "C4 — bess_engine = optimum exhaustif (pas de trade manqué)",
-        "C5_borne_max"     : "C5 — PnL réel ≤ borne max théorique",
-        "C6_formule_pnl"   : "C6 — Formule PnL cohérente",
-        "C7_prix_charge"   : "C7 — Prix achat = moyenne des heures de charge",
-        "C8_prix_decharge" : "C8 — Prix vente = moyenne des heures de décharge",
+        "C1_ordre"         : "C1  -  Décharge après charge (contrainte physique)",
+        "C2_exclusion"     : "C2  -  Aucune heure exclue utilisée",
+        "C3_spread_positif": "C3  -  Spread ≥ 0 (achat < vente)",
+        "C4_optimalite"    : "C4  -  bess_engine = optimum exhaustif (pas de trade manqué)",
+        "C5_borne_max"     : "C5  -  PnL réel ≤ borne max théorique",
+        "C6_formule_pnl"   : "C6  -  Formule PnL cohérente",
+        "C7_prix_charge"   : "C7  -  Prix achat = moyenne des heures de charge",
+        "C8_prix_decharge" : "C8  -  Prix vente = moyenne des heures de décharge",
     }
 
     # Compter les violations par règle sur tous les jours
@@ -7786,13 +7820,13 @@ with tab_verif_arb:
 
     st.divider()
 
-    # ── Tableau principal — tous les jours ────────────────────────────────────
-    st.markdown('<p class="section">Tableau complet — Sélectionnez un jour pour l\'audit détaillé</p>',
+    # ── Tableau principal  -  tous les jours ────────────────────────────────────
+    st.markdown('<p class="section">Tableau complet  -  Sélectionnez un jour pour l\'audit détaillé</p>',
                 unsafe_allow_html=True)
     st.caption(
         "Chaque ligne représente un jour simulé. "
         "La colonne **Statut** indique si les 8 contrôles automatiques passent. "
-        "La colonne **Écart (€)** compare bess_engine à l'algorithme exhaustif — "
+        "La colonne **Écart (€)** compare bess_engine à l'algorithme exhaustif  -  "
         "un écart nul prouve que bess_engine trouve l'optimum exact."
     )
 
@@ -7870,7 +7904,7 @@ with tab_verif_arb:
     st.divider()
 
     # ══════════════════════════════════════════════════════════════════
-    # PANNEAU DRILL-DOWN — Audit complet d'un jour
+    # PANNEAU DRILL-DOWN  -  Audit complet d'un jour
     # ══════════════════════════════════════════════════════════════════
     _sel_rows_va = _sel_va.selection.rows if hasattr(_sel_va, "selection") else []
 
@@ -7907,7 +7941,7 @@ with tab_verif_arb:
         <div style="background:{_hdr_bg};border:2px solid {_hdr_col};
              border-radius:8px;padding:14px 20px;margin:8px 0 16px 0;">
         <span style="font-size:1.25rem;font-weight:700;color:{_hdr_col};">
-        AUDIT COMPLET — {_date_str} ({_jour_str})</span>
+        AUDIT COMPLET  -  {_date_str} ({_jour_str})</span>
         &nbsp;&nbsp;
         <span style="font-size:1rem;font-weight:700;color:{'#155724' if _ok_all else '#721c24'};">
         {'Conforme (8/8)' if _ok_all else f'{_row_va["Nb OK"]}/{_row_va["Nb contrôles"]} contrôles OK'}
@@ -7922,23 +7956,23 @@ with tab_verif_arb:
         """, unsafe_allow_html=True)
 
         # ══════════════════════════════════════════════════════════════
-        # BLOC 1 — CONTRÔLES AUTOMATIQUES
+        # BLOC 1  -  CONTRÔLES AUTOMATIQUES
         # ══════════════════════════════════════════════════════════════
-        st.markdown("### Bloc 1 — Contrôles automatiques (8 règles)")
+        st.markdown("### Bloc 1  -  Contrôles automatiques (8 règles)")
         st.caption(
             "Chaque règle est vérifiée indépendamment. "
             "Vert = la règle passe sur ce jour. Rouge = anomalie détectée."
         )
 
         _ctrl_labels = {
-            "C1_ordre"         : ("C1 — Ordre temporel", "Toutes les heures de décharge sont strictement après la dernière heure de charge."),
-            "C2_exclusion"     : ("C2 — Heures exclues", "Aucune heure de la plage de restriction n'est utilisée pour charger ou décharger."),
-            "C3_spread_positif": ("C3 — Spread positif", "Le prix de vente moyen est supérieur au prix d'achat moyen (spread ≥ 0)."),
-            "C4_optimalite"    : ("C4 — Optimalité", "Le PnL de bess_engine est égal au PnL de l'algorithme exhaustif : aucune meilleure combinaison n'existe."),
-            "C5_borne_max"     : ("C5 — Borne max", "Le PnL réel est inférieur ou égal à la borne max théorique (sans contrainte d'ordre)."),
-            "C6_formule_pnl"   : ("C6 — Formule PnL", "PnL calculé par la formule correspond au PnL enregistré."),
-            "C7_prix_charge"   : ("C7 — Prix achat", "Le prix d'achat moyen correspond bien à la moyenne des prix des heures de charge."),
-            "C8_prix_decharge" : ("C8 — Prix vente", "Le prix de vente moyen correspond bien à la moyenne des prix des heures de décharge."),
+            "C1_ordre"         : ("C1  -  Ordre temporel", "Toutes les heures de décharge sont strictement après la dernière heure de charge."),
+            "C2_exclusion"     : ("C2  -  Heures exclues", "Aucune heure de la plage de restriction n'est utilisée pour charger ou décharger."),
+            "C3_spread_positif": ("C3  -  Spread positif", "Le prix de vente moyen est supérieur au prix d'achat moyen (spread ≥ 0)."),
+            "C4_optimalite"    : ("C4  -  Optimalité", "Le PnL de bess_engine est égal au PnL de l'algorithme exhaustif : aucune meilleure combinaison n'existe."),
+            "C5_borne_max"     : ("C5  -  Borne max", "Le PnL réel est inférieur ou égal à la borne max théorique (sans contrainte d'ordre)."),
+            "C6_formule_pnl"   : ("C6  -  Formule PnL", "PnL calculé par la formule correspond au PnL enregistré."),
+            "C7_prix_charge"   : ("C7  -  Prix achat", "Le prix d'achat moyen correspond bien à la moyenne des prix des heures de charge."),
+            "C8_prix_decharge" : ("C8  -  Prix vente", "Le prix de vente moyen correspond bien à la moyenne des prix des heures de décharge."),
         }
 
         _ck1, _ck2 = st.columns(2)
@@ -7960,9 +7994,9 @@ with tab_verif_arb:
         st.divider()
 
         # ══════════════════════════════════════════════════════════════
-        # BLOC 2 — PRIX BRUTS EXCEL
+        # BLOC 2  -  PRIX BRUTS EXCEL
         # ══════════════════════════════════════════════════════════════
-        st.markdown("### Bloc 2 — Prix bruts Excel (feuille Spot_input)")
+        st.markdown("### Bloc 2  -  Prix bruts Excel (feuille Spot_input)")
         st.caption(
             "Ces valeurs sont lues directement depuis la feuille **Spot_input** de votre Excel. "
             "Pour vérifier : filtrer ANNEE, MOIS, JOUR dans la feuille Spot_input → colonne Prix Final. "
@@ -7981,7 +8015,7 @@ with tab_verif_arb:
             "Rôle"              : [
                 ("Charge" if h in _h_ch else
                  "Décharge" if h in _h_dch else
-                 "—")
+                 " - ")
                 for h in range(24)
             ],
         })
@@ -8025,9 +8059,9 @@ Blanc = Non utilisé
         st.divider()
 
         # ══════════════════════════════════════════════════════════════
-        # BLOC 3 — COMPARAISON MOTEUR / EXHAUSTIF / BORNE MAX
+        # BLOC 3  -  COMPARAISON MOTEUR / EXHAUSTIF / BORNE MAX
         # ══════════════════════════════════════════════════════════════
-        st.markdown("### Bloc 3 — Comparaison des trois approches")
+        st.markdown("### Bloc 3  -  Comparaison des trois approches")
         st.caption(
             "**bess_engine** = algorithme de calcul (bess_engine.py). "
             "**Exhaustif** = force brute (toutes les combinaisons testées). "
@@ -8064,7 +8098,7 @@ Achat = {va_pow} × {va_dur} × {_pc_m:.4f} = <b>{va_pow*va_dur*_pc_m:.4f} €</
             _pd_exh  = np.mean([_prices[h] for h in _h_dch_exh]) if _h_dch_exh else 0
             st.markdown(f"""
 <div style="border:2px solid #0066cc;border-radius:8px;padding:12px;background:#f0f4ff;">
-<b style="color:#0066cc;">EXHAUSTIF (force brute — référence)</b><br><br>
+<b style="color:#0066cc;">EXHAUSTIF (force brute  -  référence)</b><br><br>
 <b>H charge :</b> {_h_ch_exh}<br>
 <b>H décharge :</b> {_h_dch_exh}<br><br>
 <b>Prix achat moy :</b> {_pc_exh:.4f} €/MWh<br>
@@ -8097,9 +8131,9 @@ Achat = {va_pow} × {va_dur} × {_pc_m:.4f} = <b>{va_pow*va_dur*_pc_m:.4f} €</
         st.divider()
 
         # ══════════════════════════════════════════════════════════════
-        # BLOC 4 — GRAPHIQUE INTERACTIF
+        # BLOC 4  -  GRAPHIQUE INTERACTIF
         # ══════════════════════════════════════════════════════════════
-        st.markdown("### Bloc 4 — Graphique des prix et des trades")
+        st.markdown("### Bloc 4  -  Graphique des prix et des trades")
         st.caption(
             "Barres grises = heures non utilisées. "
             "Barres rouges = heures exclues (restriction). "
@@ -8189,9 +8223,9 @@ Achat = {va_pow} × {va_dur} × {_pc_m:.4f} = <b>{va_pow*va_dur*_pc_m:.4f} €</
         st.divider()
 
         # ══════════════════════════════════════════════════════════════
-        # BLOC 5 — GUIDE DE VÉRIFICATION MANUELLE DANS EXCEL
+        # BLOC 5  -  GUIDE DE VÉRIFICATION MANUELLE DANS EXCEL
         # ══════════════════════════════════════════════════════════════
-        st.markdown("### Bloc 5 — Guide de vérification manuelle dans Excel")
+        st.markdown("### Bloc 5  -  Guide de vérification manuelle dans Excel")
         st.caption(
             "Suivez ces étapes pour vérifier vous-même chaque chiffre directement "
             "dans votre fichier Excel source, sans aucun outil intermédiaire."
@@ -8203,21 +8237,21 @@ Achat = {va_pow} × {va_dur} × {_pc_m:.4f} = <b>{va_pow*va_dur*_pc_m:.4f} €</
         _pnl_v   = _row_va["PnL bess_engine (€)"]
 
         st.markdown(f"""
-**Étape 1 — Ouvrir la feuille Spot_input dans Excel**
+**Étape 1  -  Ouvrir la feuille Spot_input dans Excel**
 > Filtre : `ANNEE = {_annee_v}` · `MOIS = {_mois_v}` · `JOUR = {_jour_v}`
 > → Vous obtenez 24 lignes, une par heure H00 à H23
 
-**Étape 2 — Vérifier les prix horaires**
+**Étape 2  -  Vérifier les prix horaires**
 > Comparez colonne `Prix Final` avec le tableau ci-dessus (Bloc 2).
 > Chaque valeur doit correspondre au centime.
 
-**Étape 3 — Repérer les heures de charge**
+**Étape 3  -  Repérer les heures de charge**
 > Heures choisies : `{_h_ch}` → colonne Prix Final de ces lignes → moyenne = `{np.mean([_prices[h] for h in _h_ch]):.4f} €/MWh`
 
-**Étape 4 — Repérer les heures de décharge**
+**Étape 4  -  Repérer les heures de décharge**
 > Heures choisies : `{_h_dch}` → colonne Prix Final de ces lignes → moyenne = `{np.mean([_prices[h] for h in _h_dch]):.4f} €/MWh`
 
-**Étape 5 — Appliquer la formule**
+**Étape 5  -  Appliquer la formule**
 ```
 PnL = Puissance × Durée × Rendement × Prix_vente_moy
     − Puissance × Durée × Prix_achat_moy
@@ -8231,7 +8265,7 @@ PnL = Puissance × Durée × Rendement × Prix_vente_moy
     = {_pnl_v:.6f} €
 ```
 
-**Étape 6 — Vérifier la cohérence**
+**Étape 6  -  Vérifier la cohérence**
 > - Les heures de charge doivent être TOUTES avant les heures de décharge
 > - Les heures `{list(_excl_h)}` (restriction) ne doivent PAS apparaître dans les étapes 3 et 4
 > - Le PnL doit être positif (spread > 0)
@@ -8275,7 +8309,7 @@ with tab_verif_lis:
     from bess_engine import lissage_day as _lissage_day
     import io as _io3
 
-    st.subheader("Vérification Lissage — Audit heure par heure")
+    st.subheader("Vérification Lissage  -  Audit heure par heure")
     st.caption(
         "Sélectionnez un jour pour vérifier les calculs de lissage : "
         "données brutes Excel, actions BESS heure par heure, formule de réduction de pointe."
@@ -8351,7 +8385,7 @@ with tab_verif_lis:
 
         @st.cache_data(show_spinner=False)
         def get_day_detail_lis(cdc_bytes, date_str, pow_, emwh, seuil_pct):
-            """Recalcule le détail heure par heure pour un jour donné — pas de listes dans le cache principal."""
+            """Recalcule le détail heure par heure pour un jour donné  -  pas de listes dans le cache principal."""
             df = pd.read_excel(_io3.BytesIO(cdc_bytes), sheet_name="CdC_kWh", engine="openpyxl")
             df.columns = [str(c).strip() for c in df.columns]
             df = df.rename(columns={"datetime": "ts"})
@@ -8396,12 +8430,12 @@ with tab_verif_lis:
         st.caption(f"Seuil P{vl_seuil}% calculé sur toute la série = **{seuil_v:.4f} MW**")
 
         _ctrl_lis_noms = {
-            "L1_soc_bornes":    "L1 — SOC toujours entre SOC_min et SOC_max",
-            "L2_lisse_positive":"L2 — Consommation lissée toujours positive",
-            "L3_pas_sur_inject":"L3 — La décharge ne dépasse jamais la conso originale",
-            "L4_red_positive":  "L4 — Réduction de pointe ≥ 0",
-            "L5_cohérence_soc": "L5 — SOC final cohérent avec le dernier historique",
-            "L6_formule_eco":   "L6 — Formule économie = Réduction × Tarif",
+            "L1_soc_bornes":    "L1  -  SOC toujours entre SOC_min et SOC_max",
+            "L2_lisse_positive":"L2  -  Consommation lissée toujours positive",
+            "L3_pas_sur_inject":"L3  -  La décharge ne dépasse jamais la conso originale",
+            "L4_red_positive":  "L4  -  Réduction de pointe ≥ 0",
+            "L5_cohérence_soc": "L5  -  SOC final cohérent avec le dernier historique",
+            "L6_formule_eco":   "L6  -  Formule économie = Réduction × Tarif",
         }
         _ctrl_lis_rows = []
         for ckey, cnom in _ctrl_lis_noms.items():
@@ -8439,7 +8473,7 @@ with tab_verif_lis:
         st.divider()
 
         # ── Tableau principal ─────────────────────────────────────────────────
-        st.markdown('<p class="section">Tableau complet — Sélectionnez un jour pour l\'audit détaillé</p>',
+        st.markdown('<p class="section">Tableau complet  -  Sélectionnez un jour pour l\'audit détaillé</p>',
                     unsafe_allow_html=True)
 
         COLS_LIS = ["Date", "Année", "Mois", "Pointe avant (MW)", "Pointe après (MW)",
@@ -8522,7 +8556,7 @@ with tab_verif_lis:
             # En-tête
             _ok_all_l_str = "Conforme (6/6)" if _ok_all_l else f'Anomalie : {row_l["Nb contrôles OK"]}/6'
             st.markdown(
-                f'<p class="section">Audit lissage — {date_l} &nbsp; '
+                f'<p class="section">Audit lissage  -  {date_l} &nbsp; '
                 f'<span style="font-weight:700;color:{"#155724" if _ok_all_l else "#721c24"};">'
                 f'{_ok_all_l_str}</span></p>',
                 unsafe_allow_html=True
@@ -8532,16 +8566,16 @@ with tab_verif_lis:
                 f"Seuil P{vl_seuil}% = {seuil_j:.4f} MW · Tarif {vl_tarif:,} €/MW/an"
             )
 
-            # ═══ BLOC 1 — Contrôles automatiques ════════════════════════
-            st.markdown("### Bloc 1 — Contrôles automatiques (6 règles)")
+            # ═══ BLOC 1  -  Contrôles automatiques ════════════════════════
+            st.markdown("### Bloc 1  -  Contrôles automatiques (6 règles)")
 
             _ctrl_lis_desc = {
-                "L1_soc_bornes":    ("L1 — SOC dans les bornes", f"Le SOC reste entre {vl_emwh*0.1:.3f} MWh (10%) et {vl_emwh*0.9:.3f} MWh (90%) à chaque heure."),
-                "L2_lisse_positive":("L2 — Conso lissée positive", "La consommation lissée ne descend jamais en négatif (pas de sur-injection)."),
-                "L3_pas_sur_inject":("L3 — Décharge ≤ conso originale", "Aux heures de décharge, la batterie ne dépasse pas la consommation du client (pas d'export réseau)."),
-                "L4_red_positive":  ("L4 — Réduction ≥ 0", "La pointe après lissage est inférieure ou égale à la pointe avant."),
-                "L5_cohérence_soc": ("L5 — SOC final cohérent", "Le SOC_final enregistré correspond au dernier point de l'historique."),
-                "L6_formule_eco":   ("L6 — Formule économie", "Économie = Réduction × Tarif, à l'arrondi près."),
+                "L1_soc_bornes":    ("L1  -  SOC dans les bornes", f"Le SOC reste entre {vl_emwh*0.1:.3f} MWh (10%) et {vl_emwh*0.9:.3f} MWh (90%) à chaque heure."),
+                "L2_lisse_positive":("L2  -  Conso lissée positive", "La consommation lissée ne descend jamais en négatif (pas de sur-injection)."),
+                "L3_pas_sur_inject":("L3  -  Décharge ≤ conso originale", "Aux heures de décharge, la batterie ne dépasse pas la consommation du client (pas d'export réseau)."),
+                "L4_red_positive":  ("L4  -  Réduction ≥ 0", "La pointe après lissage est inférieure ou égale à la pointe avant."),
+                "L5_cohérence_soc": ("L5  -  SOC final cohérent", "Le SOC_final enregistré correspond au dernier point de l'historique."),
+                "L6_formule_eco":   ("L6  -  Formule économie", "Économie = Réduction × Tarif, à l'arrondi près."),
             }
             _bc1, _bc2 = st.columns(2)
             for i, (ckey, (cname, cdesc)) in enumerate(_ctrl_lis_desc.items()):
@@ -8561,14 +8595,14 @@ with tab_verif_lis:
 
             st.divider()
 
-            # ═══ BLOC 2 — Tableau heure par heure ═══════════════════════
-            st.markdown("### Bloc 2 — Données brutes Excel et actions BESS heure par heure")
+            # ═══ BLOC 2  -  Tableau heure par heure ═══════════════════════
+            st.markdown("### Bloc 2  -  Données brutes Excel et actions BESS heure par heure")
             st.caption(
                 f"Valeurs lues depuis la feuille **CdC_kWh** pour le {date_l}, converties kWh → MW (÷1000). "
                 "Vert = charge batterie. Bleu = décharge. Jaune = heure au-dessus du seuil."
             )
 
-            _action_label = {"charge": "Charge", "decharge": "Décharge", "idle": "— Repos"}
+            _action_label = {"charge": "Charge", "decharge": "Décharge", "idle": " -  Repos"}
             df_hh = pd.DataFrame({
                 "Heure":               [f"H{h:02d}" for h in range(24)],
                 "Conso Excel (kWh/h)": [round(profil[h] * 1000, 4) for h in range(24)],
@@ -8614,8 +8648,8 @@ with tab_verif_lis:
                 hide_index=True, width="stretch", height=600
             )
 
-            # ═══ BLOC 3 — Calcul d'une heure au choix ═══════════════════
-            st.markdown("### Bloc 3 — Vérification du calcul sur une heure précise")
+            # ═══ BLOC 3  -  Calcul d'une heure au choix ═══════════════════
+            st.markdown("### Bloc 3  -  Vérification du calcul sur une heure précise")
             st.caption("Reproduit le raisonnement de bess_engine étape par étape pour l'heure choisie.")
 
             h_check = st.slider("Heure à vérifier :", 0, 23, 0, key="vl_hcheck")
@@ -8642,7 +8676,7 @@ with tab_verif_lis:
             _ok_soc = abs(soc_ap - soc_expected) < 0.001
 
             st.markdown(f"""
-**H{h_check:02d} — Raisonnement bess_engine :**
+**H{h_check:02d}  -  Raisonnement bess_engine :**
 ```
 Conso Excel     = {conso_h * 1000:.4f} kWh/h = {conso_h:.4f} MW
 Seuil P{vl_seuil}%    = {seuil_j:.4f} MW
@@ -8671,8 +8705,8 @@ bess_engine a produit = {soc_ap:.4f} MWh  {'OK' if _ok_soc else 'ERREUR'}
 
             st.divider()
 
-            # ═══ BLOC 4 — Calcul économie ════════════════════════════════
-            st.markdown("### Bloc 4 — Calcul de la réduction de pointe et de l'économie")
+            # ═══ BLOC 4  -  Calcul économie ════════════════════════════════
+            st.markdown("### Bloc 4  -  Calcul de la réduction de pointe et de l'économie")
             red_l = row_l["Réduction (MW)"]
             eco_l = row_l["Économie/an (€)"]
             h_pointe_av  = int(np.argmax(profil))
@@ -8697,8 +8731,8 @@ Réduction de pointe   = {max(profil):.4f} - {max(lisse):.4f}
 ```
             """)
 
-            # ═══ BLOC 5 — Graphique ══════════════════════════════════════
-            st.markdown("### Bloc 5 — Visualisation profil avant / après")
+            # ═══ BLOC 5  -  Graphique ══════════════════════════════════════
+            st.markdown("### Bloc 5  -  Visualisation profil avant / après")
             st.caption(
                 "Courbe pointillée = consommation originale (Excel). "
                 "Courbe pleine = après lissage BESS. "
@@ -8785,16 +8819,16 @@ Réduction de pointe   = {max(profil):.4f} - {max(lisse):.4f}
 
 with tab_pays:
     _diag_set_tab("pays")
-    st.markdown('<p class="section">Comparaison multi-pays — Arbitrage Day-Ahead</p>',
+    st.markdown('<p class="section">Comparaison multi-pays  -  Arbitrage Day-Ahead</p>',
                 unsafe_allow_html=True)
     st.caption(
         "Comparez les performances d'arbitrage sur plusieurs marchés nationaux. "
-        "Uploadez un fichier Excel par pays — même format que le fichier principal (feuille Spot_input). "
+        "Uploadez un fichier Excel par pays  -  même format que le fichier principal (feuille Spot_input). "
         "Le pays est détecté automatiquement dans le nom du fichier ou les métadonnées."
     )
 
     # ── Détection automatique du pays ────────────────────────────────────────
-    # Mots-clés par pays — les codes courts (fr, de, be...) ne matchent que comme
+    # Mots-clés par pays  -  les codes courts (fr, de, be...) ne matchent que comme
     # tokens EXACTS (mot entier isolé), les mots longs matchent aussi en sous-chaîne
     _PAYS_KEYWORDS = {
         "France":      {"long": ["france", "french", "epex_fr"], "short": ["fr"]},
@@ -8895,7 +8929,7 @@ with tab_pays:
         _pays_list.append({"nom": _pnom, "bytes": _fb, "fname": _f.name})
         _extra_bytes_set.add(_f.name)
 
-    # Fichier principal — ajouté seulement s'il n'est pas déjà dans les extras
+    # Fichier principal  -  ajouté seulement s'il n'est pas déjà dans les extras
     if file_bytes:
         _main_fname = st.session_state.get("_uploaded_fname", "fichier_principal")
         if _main_fname not in _extra_bytes_set:
@@ -8914,7 +8948,7 @@ with tab_pays:
 
     @st.cache_data(show_spinner=False)
     def _simulate_country_cached(_file_bytes, _params_json):
-        """Chargement + simulation mis en cache par (fichier pays, paramètres) —
+        """Chargement + simulation mis en cache par (fichier pays, paramètres)  - 
         rebasculer entre durées/quotas déjà testés, ou re-cliquer sans rien
         changer, ne refait pas le calcul pour les pays déjà connus."""
         import json as _j_cp, io as _io_cp2
@@ -9003,7 +9037,7 @@ with tab_pays:
         for _mi, (_mc, (_, _row)) in enumerate(zip(_medal_cols, _cp_df.iterrows())):
             with _mc:
                 st.metric(
-                    f"{_medals[_mi]} — {_row['Pays']}",
+                    f"{_medals[_mi]}  -  {_row['Pays']}",
                     f"{_row['PnL/MW/an (€/MW)']} €/MW/an",
                     delta=f"Spread moy. : {_row['Spread moy. (€/MWh)']} €/MWh"
                 )
@@ -9013,7 +9047,7 @@ with tab_pays:
             "Classement par **PnL/MW/an** = revenus annuels par MW installé. "
             "C'est la métrique clé pour décider dans quel pays investir : "
             "un marché avec un PnL/MW/an élevé génère plus de revenus pour le même investissement. "
-            "**Spread moy.** = volatilité des prix — plus il est élevé, plus les opportunités d'arbitrage sont grandes."
+            "**Spread moy.** = volatilité des prix  -  plus il est élevé, plus les opportunités d'arbitrage sont grandes."
         )
 
         # ── Graphique PnL annuel par pays ──────────────────────────────────────
@@ -9125,7 +9159,7 @@ with tab_pays:
 
 with tab_methodo:
     _diag_set_tab(None)
-    st.title("Méthodologie — Documentation Technique")
+    st.title("Méthodologie  -  Documentation Technique")
     st.write(
         "Documentation complète des algorithmes, hypothèses et données utilisés dans chaque partie de l'outil. "
         "Mise à jour en mai 2026."
@@ -9134,9 +9168,9 @@ with tab_methodo:
     with st.expander("1. Architecture générale", expanded=True):
         c1, c2 = st.columns(2)
         with c1:
-            st.write("**bess_engine.py** — Moteur de calcul pur : algorithmes d'optimisation, sans interface.")
+            st.write("**bess_engine.py**  -  Moteur de calcul pur : algorithmes d'optimisation, sans interface.")
         with c2:
-            st.write("**bess_dashboard.py** — Interface Streamlit : affichage, graphiques, export.")
+            st.write("**bess_dashboard.py**  -  Interface Streamlit : affichage, graphiques, export.")
         st.subheader("Pipeline de calcul")
         st.code(
             "Excel Spot_input / Case 3\n"
@@ -9156,7 +9190,7 @@ with tab_methodo:
             "Complexite O(k^2) avec k = nb heures disponibles",
             language="text"
         )
-        st.subheader("Mode MAX / n=0 — DP Weighted Interval Scheduling")
+        st.subheader("Mode MAX / n=0  -  DP Weighted Interval Scheduling")
         st.write(
             "Trouve le sous-ensemble non chevauchant de cycles qui maximise le PnL total. "
             "Garantit l'optimum (pas greedy)."
@@ -9181,7 +9215,7 @@ with tab_methodo:
             language="text"
         )
 
-    with st.expander("3. Modes de simulation — Chronologique vs Top-N", expanded=False):
+    with st.expander("3. Modes de simulation  -  Chronologique vs Top-N", expanded=False):
         st.subheader("Mode chronologique (simulate_arbitrage)")
         st.code(
             "for each day in 2026..2029:\n"
@@ -9196,7 +9230,7 @@ with tab_methodo:
             "les classe par spread decroissant (PnL en tiebreak), retient les N meilleurs de "
             "CETTE annee peu importe le jour. Le quota max_cycles_year est donc applique "
             "annee par annee, pas une seule fois sur tout l'horizon. "
-            "Suppose connaissance parfaite des prix annuels — borne haute theorique."
+            "Suppose connaissance parfaite des prix annuels  -  borne haute theorique."
         )
         st.code(
             "# Passe 1 : tous les cycles de tous les jours, toutes annees\n"
@@ -9228,7 +9262,7 @@ with tab_methodo:
         )
         st.code("Taux de capture (%) = PnL_reel / PnL_borne_max x 100", language="text")
 
-    with st.expander("5. Analyse de sensibilite — Heat map Puissance x Duree", expanded=False):
+    with st.expander("5. Analyse de sensibilite  -  Heat map Puissance x Duree", expanded=False):
         st.write(
             "Repond a la question : quelle combinaison puissance / duree maximise le PnL sur 4 ans ?"
         )
@@ -9325,7 +9359,7 @@ with tab_methodo:
         )
 
 # ══════════════════════════════════════════════════════════════════════════════
-# RAPPORT DE VÉRIFICATION GLOBAL — remplissage du placeholder sidebar
+# RAPPORT DE VÉRIFICATION GLOBAL  -  remplissage du placeholder sidebar
 # ══════════════════════════════════════════════════════════════════════════════
 # Placé ici (fin de script) car tous les onglets ont eu l'occasion de déposer
 # leur résumé dans st.session_state à ce stade du run. Le widget réel
