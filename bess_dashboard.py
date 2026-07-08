@@ -11,12 +11,19 @@ Modes :
 ================================================================================
 """
 
+import sys, os
+print(">>> BESS DASHBOARD STARTING", flush=True)
+print(">>> Python:", sys.version, flush=True)
+print(">>> CWD:", os.getcwd(), flush=True)
+
 import io
 import json as _json
 import json
 from datetime import datetime
 
+print(">>> stdlib OK, importing numpy...", flush=True)
 import numpy as np
+print(">>> numpy OK", flush=True)
 import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
