@@ -34,5 +34,5 @@ env/
 # ── Artefacts de debug temporaires ────────────────────────────────────────
 .debug/
 
-# ── Claude Code (mémoire personnelle, ne pas publier) ─────────────────────
+# ── Outils de développement (configuration locale, ne pas publier) ────────
 .claude/
