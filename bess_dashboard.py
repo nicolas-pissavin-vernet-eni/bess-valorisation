@@ -149,8 +149,8 @@ def build_pdf_arbitrage(params_txt, kpis, yearly_df, daily_df,
             str(int(r["annee"])),
             f"{int(r['jours_actifs'])} / {int(r['jours_simules'])}",
             f"{r['taux_activation']*100:.0f}%",
-            f"{r['spread_libre_moy']:.1f}",
-            f"{r['pnl_libre_total']:,.0f}",
+            f"{r['spread_absolu_moy']:.1f}",
+            f"{r['pnl_absolu_total']:,.0f}",
             f"{r['spread_moy']:.1f}",
             f"{r['pnl_total']:,.0f}",
             f"{r['pnl_par_MW']:.1f}",
@@ -314,8 +314,7 @@ with st.sidebar:
 
     # ── Paramètres batterie ───────────────────────────────────────────────────
     st.markdown("### Paramètres batterie")
-    energy_MWh = st.number_input("Capacité (MWh)",     0.1, 100.0, 2.0,  0.1)
-    power_MW   = st.number_input("Puissance max (MW)", 0.05, 50.0, 0.43, 0.01, format="%.3f")
+    power_MW   = st.number_input("Puissance (MW)", 0.05, 50.0, 0.43, 0.01, format="%.3f")
     efficiency = st.slider("Rendement (%)", 70, 100, 92) / 100
     max_cycles = st.number_input("Max cycles/an (0 = illimité)", 0, 365, 300)
     max_cycles = max_cycles if max_cycles > 0 else None
@@ -391,10 +390,14 @@ st.markdown('<p class="main-title">BESS Valorisation — Marché Day-Ahead</p>',
 st.markdown(
     f'<p class="sub-title">Fichier : {uploaded.name} &nbsp;|&nbsp; '
     f'{len(pivot):,} jours &nbsp;|&nbsp; {annees[0]}–{annees[-1]} &nbsp;|&nbsp; '
-    f'Batterie {energy_MWh} MWh / {power_MW} MW &nbsp;|&nbsp; '
+    f'Puissance {power_MW} MW &nbsp;|&nbsp; '
     f'Rendement {efficiency*100:.0f}%</p>',
     unsafe_allow_html=True
 )
+
+# energy_MWh défini globalement pour le mode lissage (indépendant)
+# Pour l'arbitrage, la capacité est calculée depuis power_MW × duration_h × n_cycles
+energy_MWh = 2.0  # valeur par défaut pour le lissage (saisie dans le mode lissage)
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -423,23 +426,41 @@ if mode == "Arbitrage Day-Ahead":
 
     # ── Paramètres scénario ──────────────────────────────────────────────────
     st.markdown('<p class="section">Paramètres du scénario</p>', unsafe_allow_html=True)
-    c1, c2, c3, c4 = st.columns(4)
+    c1, c2, c3, c4, c5, c6 = st.columns(6)
     with c1:
-        duration_h = st.selectbox(
-            "Durée du cycle", [1, 2],
-            format_func=lambda x: f"{x}h — {x} heure{'s' if x>1 else ''} achat+vente",
-            index=1
+        n_cycles = st.selectbox(
+            "Nb cycles / jour",
+            [1, 2],
+            format_func=lambda x: f"{x} cycle{'s' if x>1 else ''} / jour",
+            index=0,
+            help="1 cycle = 1 charge + 1 décharge. 2 cycles = matin + après-midi."
         )
     with c2:
+        duration_h = st.selectbox(
+            "Durée d'un cycle",
+            [1, 2],
+            format_func=lambda x: f"{x}h de charge + {x}h de décharge",
+            index=1,
+            help="Durée de la phase de charge OU de décharge."
+        )
+    # Capacité calculée automatiquement
+    capacite_auto = power_MW * duration_h * n_cycles
+    with c3:
+        st.metric(
+            "Capacité déduite (MWh)",
+            f"{capacite_auto:.2f} MWh",
+            delta=f"{power_MW} MW × {duration_h}h × {n_cycles} cycle(s)",
+        )
+    with c4:
         jours_excl = st.multiselect(
-            "Jours avec restriction horaire",
+            "Jours avec restriction",
             ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"],
             default=["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"]
         )
-    with c3:
+    with c5:
         h_debut = st.number_input("Heure début restriction", 0, 23, 10)
-    with c4:
-        h_fin = st.number_input("Heure fin restriction",   0, 23, 12)
+    with c6:
+        h_fin = st.number_input("Heure fin restriction", 0, 23, 12)
 
     day_map = {"Lundi":0,"Mardi":1,"Mercredi":2,"Jeudi":3,
                "Vendredi":4,"Samedi":5,"Dimanche":6}
@@ -449,36 +470,54 @@ if mode == "Arbitrage Day-Ahead":
 
     # ── Simulation ───────────────────────────────────────────────────────────
     @st.cache_data(show_spinner="Simulation...")
-    def run_arb(file_bytes, power_MW, duration_h, excl_str, efficiency, max_cycles, energy_MWh):
+    def run_arb(file_bytes, power_MW, n_cycles, duration_h,
+                excl_str, efficiency, max_cycles):
         pv = get_pivot(file_bytes)
         excl = json.loads(excl_str)
-        p = {"power_MW": power_MW, "duration_h": duration_h,
-             "excluded_hours": excl, "efficiency": efficiency,
-             "max_cycles_year": max_cycles}
+        p = {"power_MW": power_MW, "n_cycles": n_cycles,
+             "duration_h": duration_h, "excluded_hours": excl,
+             "efficiency": efficiency, "max_cycles_year": max_cycles}
         daily = simulate_arbitrage(pv, p)
         yearly = aggregate_arbitrage(daily, power_MW)
         return daily, yearly
 
     daily, yearly = run_arb(
-        file_bytes, power_MW, duration_h,
-        json.dumps(excluded), efficiency, max_cycles, energy_MWh
+        file_bytes, power_MW, n_cycles, duration_h,
+        json.dumps(excluded), efficiency, max_cycles
     )
 
     # ── KPIs ─────────────────────────────────────────────────────────────────
     st.markdown('<p class="section">Résultats globaux</p>', unsafe_allow_html=True)
 
-    total_pnl       = daily["pnl"].sum()
-    total_pnl_libre = daily["pnl_libre"].sum()
-    spread_moy      = daily.loc[daily["valid"], "spread"].mean() if daily["valid"].any() else 0
-    jours_actifs    = int(daily["valid"].sum())
-    jours_total     = len(daily)
-    jours_usure     = int(daily["usure_bloque"].sum())
-    ratio           = total_pnl / total_pnl_libre * 100 if total_pnl_libre else 0
+    total_pnl        = daily["pnl"].sum()
+    total_pnl_absolu = daily["pnl_absolu"].sum()
+    spread_moy       = daily.loc[daily["valid"], "spread"].mean() if daily["valid"].any() else 0
+    spread_abs_moy   = daily.loc[daily["valid"], "spread_absolu"].mean() if daily["valid"].any() else 0
+    jours_actifs     = int(daily["valid"].sum())
+    jours_total      = len(daily)
+    jours_usure      = int(daily["usure_bloque"].sum())
+    energie_totale   = daily["energie_MWh"].sum()
+    ratio            = total_pnl / total_pnl_absolu * 100 if total_pnl_absolu else 0
 
-    m1, m2, m3, m4, m5 = st.columns(5)
-    m1.metric("PnL total (avec contraintes)",   f"{total_pnl:,.0f} €")
-    m2.metric("PnL borne max (sans contrainte)",f"{total_pnl_libre:,.0f} €",
-              delta=f"{ratio:.1f}% du max")
+    m1, m2, m3, m4, m5, m6 = st.columns(6)
+    m1.metric("PnL réel (avec contraintes)",
+              f"{total_pnl:,.0f} €")
+    m2.metric("PnL borne théorique max",
+              f"{total_pnl_absolu:,.0f} €",
+              delta=f"{ratio:.1f}% capturé")
+    m3.metric("Spread moyen (jours actifs)",
+              f"{spread_moy:.1f} €/MWh",
+              delta=f"Théorique: {spread_abs_moy:.1f} €/MWh")
+    m4.metric("Jours actifs",
+              f"{jours_actifs} / {jours_total}",
+              delta=f"{jours_actifs/jours_total*100:.0f}% taux activation")
+    m5.metric("Énergie totale échangée",
+              f"{energie_totale:,.1f} MWh",
+              delta=f"Capacité/jour : {capacite_auto:.2f} MWh")
+    m6.metric("Jours bloqués (usure)",
+              f"{jours_usure}",
+              delta="Aucun" if jours_usure == 0 else f"{jours_usure/jours_total*100:.1f}%",
+              delta_color="off" if jours_usure == 0 else "inverse")
     m3.metric("Spread moyen",                   f"{spread_moy:.1f} €/MWh")
     m4.metric("Jours actifs",                   f"{jours_actifs} / {jours_total}",
               delta=f"{jours_actifs/jours_total*100:.0f}% taux activation")
@@ -490,9 +529,9 @@ if mode == "Arbitrage Day-Ahead":
     st.markdown('<p class="section">PnL annuel — borne max vs réel</p>', unsafe_allow_html=True)
     fig1 = go.Figure()
     fig1.add_trace(go.Bar(
-        x=yearly["annee"].astype(str), y=yearly["pnl_libre_total"],
+        x=yearly["annee"].astype(str), y=yearly["pnl_absolu_total"],
         name="Borne max", marker_color="#c8d8ec",
-        text=yearly["pnl_libre_total"].apply(lambda x: f"{x:,.0f} €"),
+        text=yearly["pnl_absolu_total"].apply(lambda x: f"{x:,.0f} €"),
         textposition="outside",
         hovertemplate="<b>%{x}</b><br>Borne max : %{y:,.0f} €<extra></extra>",
     ))
@@ -643,7 +682,7 @@ if mode == "Arbitrage Day-Ahead":
                     unsafe_allow_html=True)
         ds = daily.sort_values("date").copy()
         ds["pnl_cum"]       = ds["pnl"].cumsum()
-        ds["pnl_libre_cum"] = ds["pnl_libre"].cumsum()
+        ds["pnl_absolu_cum"] = ds["pnl_absolu"].cumsum()
         fig5 = go.Figure()
         fig5.add_trace(go.Scatter(
             x=ds["date"], y=ds["pnl_cum"],
@@ -658,7 +697,7 @@ if mode == "Arbitrage Day-Ahead":
             customdata=ds["pnl"].values,
         ))
         fig5.add_trace(go.Scatter(
-            x=ds["date"], y=ds["pnl_libre_cum"],
+            x=ds["date"], y=ds["pnl_absolu_cum"],
             mode="lines", name="Borne max",
             line=dict(color="#b0c8e0", width=1.5, dash="dot"),
             hovertemplate=(
@@ -680,15 +719,26 @@ if mode == "Arbitrage Day-Ahead":
     # ── Tableau récap ────────────────────────────────────────────────────────
     st.markdown('<p class="section">Récapitulatif annuel</p>', unsafe_allow_html=True)
     show = yearly.copy()
-    show["pnl_libre_total"] = show["pnl_libre_total"].apply(lambda x: f"{x:,.0f} €")
-    show["pnl_total"]       = show["pnl_total"].apply(lambda x: f"{x:,.0f} €")
-    show["pnl_par_MW"]      = show["pnl_par_MW"].apply(lambda x: f"{x:.1f} €/MW")
-    show["taux_activation"] = show["taux_activation"].apply(lambda x: f"{x*100:.0f}%")
-    show["spread_libre_moy"]= show["spread_libre_moy"].apply(lambda x: f"{x:.1f}")
-    show["spread_moy"]      = show["spread_moy"].apply(lambda x: f"{x:.1f}")
-    show.columns = ["Année","Jours simulés","Jours actifs","Bloqués usure",
-                    "Taux activation","Spread libre moy.","PnL borne max",
-                    "Spread contraint moy.","PnL réel","PnL/MW"]
+    show["pnl_absolu_total"]  = show["pnl_absolu_total"].apply(lambda x: f"{x:,.0f} €")
+    show["pnl_total"]         = show["pnl_total"].apply(lambda x: f"{x:,.0f} €")
+    show["pnl_par_MW"]        = show["pnl_par_MW"].apply(lambda x: f"{x:.1f} €/MW")
+    show["taux_activation"]   = show["taux_activation"].apply(lambda x: f"{x*100:.0f}%")
+    show["spread_absolu_moy"] = show["spread_absolu_moy"].apply(lambda x: f"{x:.1f}")
+    show["spread_moy"]        = show["spread_moy"].apply(lambda x: f"{x:.1f}")
+    show["energie_totale_MWh"]= show["energie_totale_MWh"].apply(lambda x: f"{x:.1f} MWh")
+    show["cycles_totaux"]     = show["cycles_totaux"].astype(int)
+    show = show[[
+        "annee","jours_simules","jours_actifs","jours_bloques_usure","taux_activation",
+        "spread_absolu_moy","pnl_absolu_total",
+        "spread_moy","pnl_total","pnl_par_MW",
+        "energie_totale_MWh","cycles_totaux"
+    ]]
+    show.columns = [
+        "Année","Jours simulés","Jours actifs","Bloqués usure","Taux activation",
+        "Spread théorique\n(€/MWh)","PnL borne max\nthéorique (€)",
+        "Spread réel\n(€/MWh)","PnL réel (€)","PnL/MW\n(€/MW)",
+        "Énergie échangée\n(MWh)","Cycles réalisés"
+    ]
     st.dataframe(show, hide_index=True, width="stretch")
 
     # ── Explorer un jour ─────────────────────────────────────────────────────
@@ -761,7 +811,7 @@ if mode == "Arbitrage Day-Ahead":
                 ]
                 kpis = [
                     ("PnL total (avec contraintes)",    f"{total_pnl:,.0f} €"),
-                    ("PnL borne max (sans contrainte)", f"{total_pnl_libre:,.0f} €"),
+                    ("PnL borne théorique max", f"{total_pnl_absolu:,.0f} €"),
                     ("Ratio réel / max",                f"{ratio:.1f}%"),
                     ("Spread moyen",                    f"{spread_moy:.2f} €/MWh"),
                     ("Jours actifs",                    f"{jours_actifs} / {jours_total}"),
@@ -783,7 +833,7 @@ if mode == "Arbitrage Day-Ahead":
     with col_exp2:
         # Export CSV données journalières
         csv_buf = daily[["date","annee","mois","weekday_name",
-                          "spread_libre","pnl_libre","spread","pnl",
+                          "spread_absolu","pnl_absolu","spread","pnl",
                           "valid","h_charge","h_decharge"]].copy()
         csv_buf["date"] = csv_buf["date"].dt.strftime("%Y-%m-%d")
         st.download_button(
@@ -810,6 +860,8 @@ else:
 
     with col_params:
         st.markdown("**Paramètres**")
+        energy_MWh  = st.number_input("Capacité batterie (MWh)", 0.1, 100.0, 2.0, 0.1,
+                                       help="Pour le lissage, la capacité est indépendante de la durée de cycle")
         seuil_pct   = st.slider("Seuil d'écrêtage (percentile)", 50, 95, 75,
                                  help="Percentile de la courbe utilisé comme seuil")
         tarif_kw    = st.number_input("Tarif puissance souscrite (€/MW/an)",
