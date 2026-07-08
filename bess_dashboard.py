@@ -68,94 +68,232 @@ COLORS  = [BLUE, LBLUE, ORANGE, GREEN, "#7b3fa0", "#b05050"]
 # EXPORT PDF
 # ──────────────────────────────────────────────────────────────────────────────
 
-def build_pdf(mode, params_txt, kpis, figures_bytes, date_str):
-    """Génère un PDF de rapport à partir des éléments clés."""
+def _make_table(data, col_widths, col_colors=None):
+    """Helper : crée un Table ReportLab stylé."""
+    from reportlab.lib import colors
+    from reportlab.platypus import Table, TableStyle
+
+    t = Table(data, colWidths=col_widths)
+    style = [
+        ("BACKGROUND",    (0, 0), (-1, 0), colors.HexColor("#1a3a5c")),
+        ("TEXTCOLOR",     (0, 0), (-1, 0), colors.white),
+        ("FONTNAME",      (0, 0), (-1, 0), "Helvetica-Bold"),
+        ("FONTSIZE",      (0, 0), (-1, -1), 8),
+        ("ROWBACKGROUNDS",(0, 1), (-1, -1),
+         [colors.HexColor("#f0f5fb"), colors.white]),
+        ("GRID",          (0, 0), (-1, -1), 0.4, colors.HexColor("#c0d0e0")),
+        ("TOPPADDING",    (0, 0), (-1, -1), 4),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
+        ("LEFTPADDING",   (0, 0), (-1, -1), 6),
+        ("ALIGN",         (1, 1), (-1, -1), "RIGHT"),
+    ]
+    t.setStyle(TableStyle(style))
+    return t
+
+
+def build_pdf_arbitrage(params_txt, kpis, yearly_df, daily_df,
+                         h_charge_freq, h_decharge_freq, date_str):
+    """Génère un rapport PDF complet pour le mode Arbitrage."""
     from reportlab.lib import colors
     from reportlab.lib.pagesizes import A4
     from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
     from reportlab.lib.units import cm
-    from reportlab.platypus import (Image, Paragraph, SimpleDocTemplate,
-                                    Spacer, Table, TableStyle)
+    from reportlab.platypus import (Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle)
 
     buf = io.BytesIO()
     doc = SimpleDocTemplate(buf, pagesize=A4,
                             leftMargin=2*cm, rightMargin=2*cm,
                             topMargin=2*cm, bottomMargin=2*cm)
-
     styles = getSampleStyleSheet()
-    title_style = ParagraphStyle("Title", parent=styles["Heading1"],
-                                  fontSize=18, textColor=colors.HexColor("#1a3a5c"),
-                                  spaceAfter=4)
-    sub_style   = ParagraphStyle("Sub", parent=styles["Normal"],
-                                  fontSize=10, textColor=colors.HexColor("#6b7a8d"),
-                                  spaceAfter=12)
-    h2_style    = ParagraphStyle("H2", parent=styles["Heading2"],
-                                  fontSize=13, textColor=colors.HexColor("#1a3a5c"),
-                                  spaceBefore=14, spaceAfter=4)
-    body_style  = ParagraphStyle("Body", parent=styles["Normal"],
-                                  fontSize=9, textColor=colors.HexColor("#333333"),
-                                  spaceAfter=6)
-
+    S = {
+        "title": ParagraphStyle("T",  parent=styles["Heading1"], fontSize=17,
+                                 textColor=colors.HexColor("#1a3a5c"), spaceAfter=2),
+        "sub":   ParagraphStyle("S",  parent=styles["Normal"],   fontSize=9,
+                                 textColor=colors.HexColor("#6b7a8d"), spaceAfter=10),
+        "h2":    ParagraphStyle("H2", parent=styles["Heading2"], fontSize=12,
+                                 textColor=colors.HexColor("#1a3a5c"),
+                                 spaceBefore=12, spaceAfter=4),
+        "body":  ParagraphStyle("B",  parent=styles["Normal"],   fontSize=8,
+                                 textColor=colors.HexColor("#333"), spaceAfter=4),
+        "foot":  ParagraphStyle("F",  parent=styles["Normal"],   fontSize=7,
+                                 textColor=colors.HexColor("#aaa")),
+    }
     story = []
 
-    # En-tête
-    story.append(Paragraph("BESS Valorisation — Marché Day-Ahead", title_style))
-    story.append(Paragraph(f"Rapport généré le {date_str} | Mode : {mode}", sub_style))
+    # ── En-tête ───────────────────────────────────────────────────────────────
+    story.append(Paragraph("BESS Valorisation — Marché Day-Ahead", S["title"]))
+    story.append(Paragraph(
+        f"Rapport Arbitrage Day-Ahead | Généré le {date_str}", S["sub"]))
+    story.append(Spacer(1, 0.2*cm))
+
+    # ── Paramètres ────────────────────────────────────────────────────────────
+    story.append(Paragraph("1. Paramètres de simulation", S["h2"]))
+    for line in params_txt:
+        story.append(Paragraph(f"• {line}", S["body"]))
     story.append(Spacer(1, 0.3*cm))
 
-    # Paramètres
-    story.append(Paragraph("Paramètres de simulation", h2_style))
-    for line in params_txt:
-        story.append(Paragraph(f"• {line}", body_style))
+    # ── KPIs ─────────────────────────────────────────────────────────────────
+    story.append(Paragraph("2. Résultats clés (toutes années)", S["h2"]))
+    kpi_data = [["Indicateur", "Valeur"]] + [[k, v] for k, v in kpis]
+    story.append(_make_table(kpi_data, [10*cm, 5*cm]))
     story.append(Spacer(1, 0.4*cm))
 
-    # KPIs tableau
-    story.append(Paragraph("Résultats clés", h2_style))
-    kpi_data = [["Indicateur", "Valeur"]] + [[k, v] for k, v in kpis]
-    kpi_table = Table(kpi_data, colWidths=[9*cm, 6*cm])
-    kpi_table.setStyle(TableStyle([
-        ("BACKGROUND",   (0, 0), (-1, 0), colors.HexColor("#1a3a5c")),
-        ("TEXTCOLOR",    (0, 0), (-1, 0), colors.white),
-        ("FONTNAME",     (0, 0), (-1, 0), "Helvetica-Bold"),
-        ("FONTSIZE",     (0, 0), (-1, -1), 9),
-        ("ROWBACKGROUNDS", (0, 1), (-1, -1),
-         [colors.HexColor("#f0f5fb"), colors.white]),
-        ("GRID",         (0, 0), (-1, -1), 0.5, colors.HexColor("#c0d0e0")),
-        ("TOPPADDING",   (0, 0), (-1, -1), 5),
-        ("BOTTOMPADDING",(0, 0), (-1, -1), 5),
-        ("LEFTPADDING",  (0, 0), (-1, -1), 8),
-    ]))
-    story.append(kpi_table)
+    # ── Récapitulatif annuel ──────────────────────────────────────────────────
+    story.append(Paragraph("3. Récapitulatif annuel", S["h2"]))
+    yr = yearly_df.copy()
+    yr_data = [["Année", "Jours actifs", "Taux activ.", "Spread libre\n(€/MWh)",
+                 "PnL borne max\n(€)", "Spread contraint\n(€/MWh)",
+                 "PnL réel\n(€)", "PnL/MW\n(€/MW)"]]
+    for _, r in yr.iterrows():
+        yr_data.append([
+            str(int(r["annee"])),
+            f"{int(r['jours_actifs'])} / {int(r['jours_simules'])}",
+            f"{r['taux_activation']*100:.0f}%",
+            f"{r['spread_libre_moy']:.1f}",
+            f"{r['pnl_libre_total']:,.0f}",
+            f"{r['spread_moy']:.1f}",
+            f"{r['pnl_total']:,.0f}",
+            f"{r['pnl_par_MW']:.1f}",
+        ])
+    story.append(_make_table(yr_data,
+                              [1.5*cm, 2.5*cm, 1.8*cm, 2*cm, 2.5*cm, 2.5*cm, 2.3*cm, 2*cm]))
+    story.append(Spacer(1, 0.4*cm))
+
+    # ── Profil horaire charge/décharge ────────────────────────────────────────
+    story.append(Paragraph("4. Profil horaire — fréquence charge / décharge", S["h2"]))
+    story.append(Paragraph(
+        "Nombre de jours où chaque heure a été utilisée pour charger ou décharger.",
+        S["body"]))
+    h_data = [["Heure"] + [str(h) for h in range(24)],
+              ["Charge (jours)"] + [str(h_charge_freq.get(h, 0)) for h in range(24)],
+              ["Décharge (jours)"] + [str(h_decharge_freq.get(h, 0)) for h in range(24)]]
+    col_w = [2.5*cm] + [0.6*cm]*24
+    story.append(_make_table(h_data, col_w))
+    story.append(Spacer(1, 0.4*cm))
+
+    # ── Distribution des spreads par tranche ──────────────────────────────────
+    story.append(Paragraph("5. Distribution des spreads journaliers", S["h2"]))
+    spreads = daily_df.loc[daily_df["valid"], "spread"].dropna()
+    bins = [0, 20, 40, 60, 80, 100, 150, 200, float("inf")]
+    labels = ["0-20", "20-40", "40-60", "60-80", "80-100",
+              "100-150", "150-200", ">200"]
+    dist_data = [["Tranche (€/MWh)", "Nb jours", "% du total"]]
+    total_v = len(spreads)
+    for i, (lo, hi) in enumerate(zip(bins[:-1], bins[1:])):
+        cnt = ((spreads >= lo) & (spreads < hi)).sum()
+        dist_data.append([labels[i], str(cnt),
+                           f"{cnt/total_v*100:.1f}%" if total_v else "0%"])
+    story.append(_make_table(dist_data, [6*cm, 4*cm, 4*cm]))
+    story.append(Spacer(1, 0.4*cm))
+
+    # ── PnL cumulé par mois ───────────────────────────────────────────────────
+    story.append(Paragraph("6. PnL mensuel", S["h2"]))
+    monthly = daily_df.groupby(["annee", "mois"]).agg(
+        pnl=("pnl", "sum"), jours_actifs=("valid", "sum")).reset_index()
+    months_fr = ["Jan","Fév","Mar","Avr","Mai","Jun",
+                  "Jul","Aoû","Sep","Oct","Nov","Déc"]
+    m_data = [["Période", "Jours actifs", "PnL (€)", "PnL cumulé (€)"]]
+    cumul = 0
+    for _, r in monthly.iterrows():
+        cumul += r["pnl"]
+        m_data.append([
+            f"{months_fr[int(r['mois'])-1]} {int(r['annee'])}",
+            str(int(r["jours_actifs"])),
+            f"{r['pnl']:,.0f}",
+            f"{cumul:,.0f}",
+        ])
+    story.append(_make_table(m_data, [3.5*cm, 3*cm, 3.5*cm, 4*cm]))
     story.append(Spacer(1, 0.5*cm))
 
-    # Graphiques
-    if figures_bytes:
-        story.append(Paragraph("Visualisations", h2_style))
-        for fig_bytes in figures_bytes:
-            img_buf = io.BytesIO(fig_bytes)
-            img = Image(img_buf, width=16*cm, height=8*cm)
-            story.append(img)
-            story.append(Spacer(1, 0.3*cm))
-
-    # Pied de page
-    story.append(Spacer(1, 0.5*cm))
+    # ── Pied de page ─────────────────────────────────────────────────────────
     story.append(Paragraph(
         "Plénitude B-Charge — BESS Valorisation v2.0 — Document confidentiel",
-        ParagraphStyle("Footer", parent=styles["Normal"],
-                       fontSize=8, textColor=colors.HexColor("#aaaaaa"))
-    ))
+        S["foot"]))
 
     doc.build(story)
     buf.seek(0)
     return buf.read()
 
 
-def fig_to_bytes(fig):
-    """Convertit une figure Plotly en PNG bytes pour le PDF."""
-    try:
-        return fig.to_image(format="png", width=900, height=450, scale=1.5)
-    except Exception:
-        return None
+def build_pdf_lissage(params_txt, kpis, detail_df, yearly_df, date_str):
+    """Génère un rapport PDF complet pour le mode Lissage."""
+    from reportlab.lib import colors
+    from reportlab.lib.pagesizes import A4
+    from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+    from reportlab.lib.units import cm
+    from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer
+
+    buf = io.BytesIO()
+    doc = SimpleDocTemplate(buf, pagesize=A4,
+                            leftMargin=2*cm, rightMargin=2*cm,
+                            topMargin=2*cm, bottomMargin=2*cm)
+    styles = getSampleStyleSheet()
+    S = {
+        "title": ParagraphStyle("T",  parent=styles["Heading1"], fontSize=17,
+                                 textColor=colors.HexColor("#1a3a5c"), spaceAfter=2),
+        "sub":   ParagraphStyle("S",  parent=styles["Normal"],   fontSize=9,
+                                 textColor=colors.HexColor("#6b7a8d"), spaceAfter=10),
+        "h2":    ParagraphStyle("H2", parent=styles["Heading2"], fontSize=12,
+                                 textColor=colors.HexColor("#1a3a5c"),
+                                 spaceBefore=12, spaceAfter=4),
+        "body":  ParagraphStyle("B",  parent=styles["Normal"],   fontSize=8,
+                                 textColor=colors.HexColor("#333"), spaceAfter=4),
+        "foot":  ParagraphStyle("F",  parent=styles["Normal"],   fontSize=7,
+                                 textColor=colors.HexColor("#aaa")),
+    }
+    story = []
+
+    story.append(Paragraph("BESS Valorisation — Lissage de charge", S["title"]))
+    story.append(Paragraph(f"Rapport Lissage | Généré le {date_str}", S["sub"]))
+    story.append(Spacer(1, 0.2*cm))
+
+    story.append(Paragraph("1. Paramètres", S["h2"]))
+    for line in params_txt:
+        story.append(Paragraph(f"• {line}", S["body"]))
+    story.append(Spacer(1, 0.3*cm))
+
+    story.append(Paragraph("2. Résultats clés", S["h2"]))
+    kpi_data = [["Indicateur", "Valeur"]] + [[k, v] for k, v in kpis]
+    story.append(_make_table(kpi_data, [10*cm, 5*cm]))
+    story.append(Spacer(1, 0.4*cm))
+
+    story.append(Paragraph("3. Projection économique annuelle", S["h2"]))
+    yr_data = [["Année", "Réduction pointe (MW)",
+                 "Pointe avant (MW)", "Pointe après (MW)", "Économie (€)"]]
+    for _, r in yearly_df.iterrows():
+        yr_data.append([
+            str(int(r["annee"])),
+            f"{r['reduction_pointe']:.3f}",
+            f"{r['pointe_avant_MW']:.2f}",
+            f"{r['pointe_apres_MW']:.2f}",
+            f"{r['economie_an']:,.0f}",
+        ])
+    story.append(_make_table(yr_data, [2.5*cm, 3.5*cm, 3.5*cm, 3.5*cm, 3*cm]))
+    story.append(Spacer(1, 0.4*cm))
+
+    story.append(Paragraph("4. Profil heure par heure (jour type)", S["h2"]))
+    det_data = [["Heure", "Conso originale\n(MW)", "Action BESS",
+                  "Puissance BESS\n(MW)", "Conso lissée\n(MW)", "SOC après\n(MWh)"]]
+    for _, r in detail_df.iterrows():
+        action_parts = str(r["Action BESS"]).split()
+        det_data.append([
+            str(r["Heure"]),
+            f"{float(r['Conso originale (MW)']):.3f}",
+            action_parts[0] if action_parts else "idle",
+            action_parts[1] if len(action_parts) > 1 else "0",
+            f"{float(r['Conso lissée (MW)']):.3f}",
+            f"{float(r['SOC après (MWh)']):.3f}",
+        ])
+    story.append(_make_table(det_data,
+                              [1.5*cm, 3*cm, 2.5*cm, 3*cm, 3*cm, 3*cm]))
+    story.append(Spacer(1, 0.5*cm))
+
+    story.append(Paragraph(
+        "Plénitude B-Charge — BESS Valorisation v2.0 — Document confidentiel",
+        S["foot"]))
+    doc.build(story)
+    buf.seek(0)
+    return buf.read()
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -521,11 +659,9 @@ if mode == "Arbitrage Day-Ahead":
                     ("Taux d'activation",               f"{jours_actifs/jours_total*100:.0f}%"),
                     ("Jours bloqués (usure)",           str(jours_usure)),
                 ]
-                figs_bytes = [b for b in [
-                    fig_to_bytes(fig1), fig_to_bytes(fig3), fig_to_bytes(fig5)
-                ] if b]
-                pdf_bytes = build_pdf(
-                    "Arbitrage Day-Ahead", params_txt, kpis, figs_bytes,
+                pdf_bytes = build_pdf_arbitrage(
+                    params_txt, kpis, yearly, daily,
+                    h_ch, h_dch,
                     datetime.now().strftime("%d/%m/%Y %H:%M")
                 )
                 st.download_button(
@@ -735,9 +871,15 @@ else:
                     ("Économie annuelle estimée", f"{res['economie_an']:,.0f} €"),
                     ("Seuil appliqué",            f"{res['seuil_MW']:.2f} MW"),
                 ]
-                figs_bytes = [b for b in [fig_to_bytes(fig_l), fig_to_bytes(fig_soc)] if b]
-                pdf_bytes = build_pdf(
-                    "Lissage de charge", params_txt, kpis, figs_bytes,
+                detail_df = pd.DataFrame({
+                    "Heure": [f"H{h:02d}" for h in range(24)],
+                    "Conso originale (MW)": profil_arr.round(3),
+                    "Action BESS": [f"{a} {v:.3f} MW" for a, v in jour["actions"]],
+                    "Conso lissée (MW)": jour["profil_lisse"].round(3),
+                    "SOC après (MWh)": jour["soc_hist"][1:],
+                })
+                pdf_bytes = build_pdf_lissage(
+                    params_txt, kpis, detail_df, res["yearly"],
                     datetime.now().strftime("%d/%m/%Y %H:%M")
                 )
                 st.download_button(
