@@ -9335,6 +9335,7 @@ if st.session_state.get("_diag_global_requested"):
     import datetime as _dtd_final
     _diag_html = _build_global_diag_html()
     with _diag_report_slot.container():
+        print()
         st.download_button(
             "⬇ Télécharger le rapport complet (HTML)",
             data=_diag_html.encode("utf-8"),
