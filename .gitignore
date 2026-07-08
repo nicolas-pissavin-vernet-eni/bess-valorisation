@@ -1,0 +1,38 @@
+# ── Secrets — ne jamais committer de clé API ──────────────────────────────
+secrets.toml
+.streamlit/secrets.toml
+
+# ── Données — fichiers à uploader dans l'app, pas dans le repo ────────────
+*.xlsx
+*.xls
+*.csv
+*.zip
+*.parquet
+*.pdf
+*.docx
+*.pptx
+*.html
+*.mp4
+
+# Dossiers de données
+Intraday/
+REX/
+
+# ── Python ────────────────────────────────────────────────────────────────
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+env/
+
+# ── Artefacts de debug temporaires ────────────────────────────────────────
+.debug/
+
+# ── Claude Code (mémoire personnelle, ne pas publier) ─────────────────────
+.claude/
