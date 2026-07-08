@@ -398,6 +398,24 @@ st.markdown(
 
 
 # ══════════════════════════════════════════════════════════════════════════════
+# CONFIG GRAPHIQUES — commune aux deux modes
+# ══════════════════════════════════════════════════════════════════════════════
+
+# Toolbar Plotly complète : zoom, pan, sélection, export PNG
+PLOTLY_CFG = dict(
+    scrollZoom=True,
+    displayModeBar=True,
+    modeBarButtonsToAdd=["drawrect", "eraseshape"],
+    modeBarButtonsToRemove=["lasso2d"],
+    displaylogo=False,
+    toImageButtonOptions=dict(format="png", width=1400, height=700, scale=2),
+)
+
+# Légende placée en bas (sous le graphique) pour ne pas masquer la toolbar
+LEGEND_BOTTOM = dict(orientation="h", y=-0.18, x=0, xanchor="left")
+
+
+# ══════════════════════════════════════════════════════════════════════════════
 # MODE 1 — ARBITRAGE DA
 # ══════════════════════════════════════════════════════════════════════════════
 
@@ -468,16 +486,6 @@ if mode == "Arbitrage Day-Ahead":
               delta="Aucun" if jours_usure == 0 else f"{jours_usure/jours_total*100:.1f}%",
               delta_color="off" if jours_usure == 0 else "inverse")
 
-    # Config commune pour tous les graphiques — active toolbar complète
-    PLOTLY_CFG = dict(
-        scrollZoom=True,
-        displayModeBar=True,
-        modeBarButtonsToAdd=["drawrect", "eraseshape"],
-        modeBarButtonsToRemove=["lasso2d"],
-        displaylogo=False,
-        toImageButtonOptions=dict(format="png", width=1400, height=700, scale=2),
-    )
-
     # ── Graphique 1 : PnL annuel ─────────────────────────────────────────────
     st.markdown('<p class="section">PnL annuel — borne max vs réel</p>', unsafe_allow_html=True)
     fig1 = go.Figure()
@@ -499,7 +507,7 @@ if mode == "Arbitrage Day-Ahead":
         barmode="group", height=380,
         yaxis=dict(title="PnL (€)", tickformat=",", gridcolor="#f0f0f0"),
         xaxis_title="Année",
-        legend=dict(orientation="h", y=1.08, x=0),
+        legend=LEGEND_BOTTOM,
         margin=dict(t=10, b=40, l=60, r=20),
         plot_bgcolor="white", paper_bgcolor="white",
         hoverlabel=dict(bgcolor="white", font_size=13),
@@ -555,7 +563,7 @@ if mode == "Arbitrage Day-Ahead":
             yaxis=dict(title="Spread (€/MWh)", gridcolor="#f0f0f0"),
             xaxis=dict(title="", tickformat="%b %Y", nticks=12),
             plot_bgcolor="white", paper_bgcolor="white",
-            legend=dict(orientation="h", y=1.1),
+            legend=LEGEND_BOTTOM,
             hoverlabel=dict(bgcolor="white", font_size=12),
             hovermode="x unified",
         )
@@ -592,7 +600,7 @@ if mode == "Arbitrage Day-Ahead":
                        tickvals=list(range(24))),
             yaxis=dict(title="Nb jours", gridcolor="#f0f0f0"),
             plot_bgcolor="white", paper_bgcolor="white",
-            legend=dict(orientation="h", y=1.1),
+            legend=LEGEND_BOTTOM,
             hoverlabel=dict(bgcolor="white", font_size=12),
         )
         st.plotly_chart(fig3, width="stretch", config=PLOTLY_CFG)
@@ -663,7 +671,7 @@ if mode == "Arbitrage Day-Ahead":
             yaxis=dict(title="PnL cumulé (€)", tickformat=",", gridcolor="#f0f0f0"),
             xaxis=dict(title="", tickformat="%b %Y"),
             plot_bgcolor="white", paper_bgcolor="white",
-            legend=dict(orientation="h", y=1.1),
+            legend=LEGEND_BOTTOM,
             hoverlabel=dict(bgcolor="white", font_size=12),
             hovermode="x unified",
         )
@@ -729,7 +737,7 @@ if mode == "Arbitrage Day-Ahead":
                                tickvals=list(range(24))),
                     yaxis=dict(title="Prix (€/MWh)", gridcolor="#f0f0f0"),
                     plot_bgcolor="white", paper_bgcolor="white",
-                    legend=dict(orientation="h", y=1.1),
+                    legend=LEGEND_BOTTOM,
                     hoverlabel=dict(bgcolor="white", font_size=12),
                 )
                 st.plotly_chart(fig_d, width="stretch", config=PLOTLY_CFG)
@@ -885,7 +893,7 @@ else:
     fig_l.update_layout(
         height=520, margin=dict(t=40, b=40, l=60, r=20),
         plot_bgcolor="white", paper_bgcolor="white",
-        legend=dict(orientation="h", y=1.04),
+        legend=LEGEND_BOTTOM,
         xaxis2=dict(tickmode="linear", dtick=1, title="Heure",
                     ticktext=[f"H{h:02d}" for h in range(24)],
                     tickvals=list(range(24))),
